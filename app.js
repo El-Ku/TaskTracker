@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks = {};
     }
     else {  //some tasks found in localstorage. Show them in a table format
+        latestIndex = Number(localStorage.getItem("latestIndex"));
         for (const index in tasks) {
             updateTable(Number(index)); 
         }
@@ -22,9 +23,7 @@ addTaskBtn.addEventListener("click", () => {
     let taskItems = document.getElementById("taskInput").value;
     taskItems = taskItems.split(",");  //get an array of tasks if entered as comma separated
     // Add each task into separate rows. one by one.
-    console.log(taskItems, latestIndex)
     taskItems.forEach((taskItem) => {
-        console.log(tasks[String(latestIndex)])
         tasks[String(++latestIndex)] = {
             taskId: latestIndex,
             taskName: taskItem,
@@ -34,6 +33,7 @@ addTaskBtn.addEventListener("click", () => {
         updateTable(latestIndex);  // add a new row to the table with the new task.
     });
     localStorage.setItem("tasks", JSON.stringify(tasks));  //save the tasks object in localstorage
+    localStorage.setItem("latestIndex", latestIndex);
     document.getElementById("taskInput").value = "";  //clear the input text box.
 });
 
