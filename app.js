@@ -71,14 +71,18 @@ const addRow = (item) => {
     });
     // add cancel button
     let cancelBtn = document.createElement("button");
-    cancelBtn.textContent = "Cancel";
+    cancelBtn.textContent = "❌";
+    cancelBtn.style.backgroundColor = "white";
+    cancelBtn.style.border = "none";
     cancelBtn.className = "cancelBtn";
     cancelBtn.addEventListener("click", () => {
         removeTaskFromArray(cancelBtn.parentElement.parentElement);
     });
     // add Edit button
     let editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
+    editBtn.textContent = "✍";
+    editBtn.style.backgroundColor = "white";
+    editBtn.style.border = "none";
     editBtn.className = "editBtn";
     editBtn.addEventListener("click", () => {
         editTask(editBtn.parentElement.parentElement);
@@ -138,8 +142,9 @@ const toggleDoneTodo = (done, doneBtn, row) => {
         doneBtn.style.backgroundColor = "yellow";
         row.style.backgroundColor = "green";
     } else {
-        doneBtn.textContent = "Done";
-        doneBtn.style.backgroundColor = "green";
+        doneBtn.textContent = "✅";
+        doneBtn.style.backgroundColor = "white";
+        doneBtn.style.border = "none";
         row.style.backgroundColor = "white";
     }
 }

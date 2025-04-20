@@ -45,25 +45,18 @@ button.done {
   color: white;
   border: none;
   padding: 6px 10px;
-  border-radius: 4px;
   cursor: pointer;
 }
 
 button.cancelled {
-  background-color: #dc3545;
   color: white;
   border: none;
   padding: 6px 10px;
-  border-radius: 4px;
   cursor: pointer;
 }
 
 button.done:hover {
   background-color: #218838;
-}
-
-button.cancelled:hover {
-  background-color: #c82333;
 }
 
 button.doneBtn {
