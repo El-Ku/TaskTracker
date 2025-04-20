@@ -2,7 +2,7 @@ let tasks = {};  //contains all the individual task objects
 const addTaskBtn = document.getElementById("addBtn");
 const taskTable = document.getElementById("taskTable");
 let latestIndex = 0; //indicates the next property name to which new task willsl be added.
-
+const clearAllBtn = document.getElementById("clearBtn");
 
 document.addEventListener("DOMContentLoaded", () => {
     tasks = JSON.parse(localStorage.getItem("tasks"));
@@ -50,8 +50,8 @@ const updateTable = (index) => {
 
 // Function for adding a single row to the table.
 const addRow = (item) => {
-    let thead = taskTable.createTHead();
-    let row = thead.insertRow();
+    let tbody = document.getElementById("taskTableBody");
+    let row = tbody.insertRow();
     // add text cells to the row
     Object.values(item).slice(0,3).forEach((val) => {
         let cell = row.insertCell();
@@ -153,3 +153,10 @@ const formatDate = (timestamp) => {
     });
     return formatted;
 };
+
+clearAllBtn.addEventListener("click", () => {
+    tasks = {};
+    latestIndex = 0;  //reset max index value
+    localStorage.setItem("tasks", JSON.stringify(tasks));    // update localstorage
+    document.getElementById("taskTableBody").innerHTML = "";  //clear table
+});
