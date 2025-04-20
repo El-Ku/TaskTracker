@@ -40,21 +40,6 @@ body {
   background-color: #0056b3;
 }
 
-button.done {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-button.cancelled {
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
 button.done:hover {
   background-color: #218838;
 }
@@ -62,16 +47,21 @@ button.done:hover {
 button.doneBtn {
   background-color: #67e284;
   margin-right: 5px;
+  font-size: 20px;
+  border: none;
 }
 
 button.cancelBtn {
   background-color: #dc3545;
   margin-right: 5px;
+  font-size: 20px;
+  border: none;
 }
 
 button.editBtn {
   background-color: #7f99da;
-
+  font-size: 20px;
+  border: none;
 }
 
 table {
