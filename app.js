@@ -11,9 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks = {};
     }
     else {  //some tasks found in localstorage. Show them in a table format
-        latestIndex = Number(localStorage.getItem("latestIndex"));
-        for (const index in tasks) {
-            updateTable(Number(index)); 
+        if(Object.keys(tasks).length == 0) {
+            latestIndex = 0;
+            console.log("No tasks in memory. Create something fresh");
+        } else {
+            latestIndex = Number(localStorage.getItem("latestIndex"));
+            for (const index in tasks) {
+                updateTable(Number(index)); 
+            }
         }
     }
 });
@@ -58,10 +63,11 @@ const addRow = (item) => {
     // Add Done button
     let cell = row.insertCell();
     let doneBtn = document.createElement("button");
-    doneBtn.textContent = "Done";
+    toggleDoneTodo(item.done, doneBtn, row);
     doneBtn.className = "doneBtn";
     doneBtn.addEventListener("click", () => {
         setTaskDone(doneBtn.parentElement.parentElement);
+        toggleDoneTodo(item.done, doneBtn, row);
     });
     // add cancel button
     let cancelBtn = document.createElement("button");
@@ -81,10 +87,6 @@ const addRow = (item) => {
     cell.appendChild(doneBtn);
     cell.appendChild(cancelBtn);
     cell.appendChild(editBtn);
-    // useful when read from localstorage
-    if(item.done) {
-        row.style.backgroundColor = "green";
-    }
 };
 
 // remove a row from the table and delete the property from the tasks object
@@ -96,11 +98,10 @@ const removeTaskFromArray = (rowElement) => {
 };
 
 // mark a task as "done" and change its backgroundcolor to green
-const setTaskDone = (rowElement) => {
+const setTaskDone = (rowElement) => {   
     const taskId = rowElement.cells[0].textContent; //get the task ID.
-    tasks[taskId].done = true;  //remove the task item from the tasks object.
+    tasks[taskId].done = !tasks[taskId].done;  //remove the task item from the tasks object.
     localStorage.setItem("tasks", JSON.stringify(tasks));   // update localstorage
-    rowElement.style.backgroundColor = "green";
 };
 
 // edit a task right from the table. 
@@ -129,6 +130,20 @@ const editTask = (rowElement) => {
         }
     });
 };
+
+// Toggle colors of buttons and row and change button text.
+const toggleDoneTodo = (done, doneBtn, row) => {
+    if(done) {
+        doneBtn.textContent = "toDo";
+        doneBtn.style.backgroundColor = "yellow";
+        row.style.backgroundColor = "green";
+    } else {
+        doneBtn.textContent = "Done";
+        doneBtn.style.backgroundColor = "green";
+        row.style.backgroundColor = "white";
+    }
+}
+
 
 // format the date number to display on the table in a human readable format
 const formatDate = (timestamp) => {
