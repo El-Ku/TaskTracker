@@ -77,28 +77,27 @@ const deleteTask = (rowElement) => {
 };
 
 // mark a task as "done" and change its backgroundcolor to green
-const setTaskStatus = (rowElement, status) => {   
+const setTaskStatus = (rowElement, status) => {
     // get taskId and send to server
-    const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
+    const taskId = Number(rowElement.cells[0].textContent); //get the task ID.
     fetch(window.location.pathname + "?action=statusChange", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({taskId: taskId, status: status}),
-    }
+        body: JSON.stringify({ taskId: taskId, status: status }),
+    })
         .then((res) => res.json())
         .then((data) => {
-            if(data === -1) {
+            if (data === -1) {
                 throw Error("This taskId doesnt exist in our database");
             } else {
                 const arrIndex = tasks.findIndex((task) => task.id === taskId);
-                tasks[arrIndex].status = status;  //change status in local memory
+                tasks[arrIndex].status = status; //change status in local memory
                 redoTableRows();
             }
         })
         .catch((err) => console.error("Error in Adding a Task:", err));
-
 };
 
 // edit a task right from the table. 
@@ -182,7 +181,7 @@ const addRow = (task) => {
     let tbody = document.getElementById("taskTableBody");
     let row = tbody.insertRow();
     // add text cells to the row
-    let cell; //val = 
+    let cell; 
     let text;
     // add id to the table
     cell = row.insertCell();
@@ -203,48 +202,20 @@ const addRow = (task) => {
 const addButtons = (row, status) => {
     let cell = row.insertCell();
     // Add Done button
-    let doneBtn = document.createElement("button");
-    doneBtn.textContent = ButtonText[TaskStatus.DONE];
-    doneBtn.className = "doneBtn";
-    addEventListenersToButton(doneBtn, TaskStatus.DONE, "Done");
-    cell.appendChild(doneBtn);
+    addEventListenersToButton(row, cell, TaskStatus.DONE, "Done", "doneBtn", status);
     // Add Pause button
-    let pauseBtn = document.createElement("button");
-    pauseBtn.textContent = ButtonText[TaskStatus.PAUSED];
-    pauseBtn.className = "pauseBtn";
-    addEventListenersToButton(pauseBtn, TaskStatus.PAUSED, "Pause");
-    cell.appendChild(pauseBtn);
+    addEventListenersToButton(row, cell, TaskStatus.PAUSED, "Pause", "pauseBtn", status);
     // Add Undone button (don/paused to pending)
-    let undoneBtn = document.createElement("button");
-    undoneBtn.textContent = ButtonText[TaskStatus.PENDING];
-    undoneBtn.className = "undoneBtn";
-    addEventListenersToButton(undoneBtn, TaskStatus.PENDING, "toDo");
-    cell.appendChild(undoneBtn);
-    if (status == TaskStatus.DONE) {
-        row.style.backgroundColor = "green";
-        doneBtn.disabled = true;
-    } else if (status == TaskStatus.PAUSED) {
-        row.style.backgroundColor = "yellow";
-        pauseBtn.disabled = true;
-    } else {
-        row.style.backgroundColor = "white";
-        undoneBtn.disabled = true;
-    }
+    addEventListenersToButton(row, cell, TaskStatus.PENDING, "toDo", "undoneBtn", status);
     // add delete button
-    let deleteBtn = document.createElement("button");
-    deleteBtn.textContent = ButtonText["Delete"];
-    deleteBtn.className = "deleteBtn";
-    addEventListenersToButton(deleteBtn, "Delete", "Delete");
-    cell.appendChild(deleteBtn);
+    addEventListenersToButton(undefined, cell, "Delete", "Delete", "deleteBtn", undefined);
     // add Edit button
-    let editBtn = document.createElement("button");
-    editBtn.textContent = ButtonText["Edit"];
-    editBtn.className = "editBtn";
-    addEventListenersToButton(editBtn, "Edit", "Edit");
-    cell.appendChild(editBtn);
+    addEventListenersToButton(undefined, cell, "Edit", "Edit", "editBtn", undefined);
 }
 
-const addEventListenersToButton = (btn, statusText, hoverText) => {
+const addEventListenersToButton = (row, cell, statusText, hoverText, className, status) => {
+    let btn = document.createElement("button");
+    btn.textContent = ButtonText[statusText];
     btn.addEventListener("click", () => {
         if(statusText == "Delete") {
             deleteTask(btn.parentElement.parentElement);
@@ -263,6 +234,18 @@ const addEventListenersToButton = (btn, statusText, hoverText) => {
         btn.textContent = ButtonText[statusText];
         btn.style.fontSize = CSS_PROP['--btn-font-size'];
     })
+    btn.className = className;
+    if (status == TaskStatus.DONE && statusText == TaskStatus.DONE) {
+        row.style.backgroundColor = "green";
+        btn.disabled = true;
+    } else if (status == TaskStatus.PAUSED && statusText == TaskStatus.PAUSED) {
+        row.style.backgroundColor = "yellow";
+        btn.disabled = true;
+    } else if (status == TaskStatus.PENDING && statusText == TaskStatus.PENDING) {
+        row.style.backgroundColor = "white";
+        btn.disabled = true;
+    }
+    cell.appendChild(btn);
 }
 
 // format the date number to display on the table in a human readable format
