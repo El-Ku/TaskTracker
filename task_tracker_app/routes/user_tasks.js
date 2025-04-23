@@ -6,21 +6,49 @@ const taskController = require('../controllers/taskController');
 
 // get request for the public tasks file.
 router.get('/', (req, res) => {
-    const userName = req.params.userName;
-    res.sendFile(path.join(__dirname, '..', 'public','tasks.html'));
+    res.sendFile(path.join(__dirname, '..', 'public/tasks.html'));
 });
 
-// data requests from the client through POST requests
+// Retrieve all tasks via a GET request
+router.get('/allTasks', (req, res) => {
+    try {
+        res.send(taskController.loadAll());
+    } catch (err) {
+        console.error('Server encountered an error while retrieving your tasks:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// add tasks via  a POST request
 router.post('/', (req, res) => {
-    const action = req.query.action;
     const data = req.body;
-    switch (action) {
-        case 'loadAll': return res.send(taskController.loadAll());
-        case 'add': return res.send(taskController.addTasks(data));
-        case 'delete': return res.send(taskController.deleteTask(data));
-        case 'statusChange': return res.send(taskController.changeTaskStatus(data));
-        case 'taskChange': return res.send(taskController.changeTaskName(data));
-        case 'deleteAll': return res.send(taskController.deleteAllTasks());
+    try {
+        res.send(taskController.addTasks(data));
+    } catch (err) {
+        console.error('Server encountered an error while adding your tasks to the database:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// delete tasks via a DELETE request
+router.delete('/', (req, res) => {
+    const data = req.body;
+    try {
+        res.send(taskController.deleteTask(data));
+    } catch (err) {
+        console.error('Server encountered an error while deleting selected tasks from the database:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Edit a task via a PUT request
+router.put('/', (req, res) => {
+    const data = req.body;
+    try {
+        res.send(taskController.changeTask(data));
+    } catch (err) {
+        console.error('Server encountered an error while editing the selected task in our database:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

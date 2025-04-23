@@ -8,9 +8,7 @@ const clearAllBtn = document.getElementById("clearBtn");
 
 document.addEventListener("DOMContentLoaded", () => {
     //get table data from the server
-    fetch(window.location.pathname + "?action=loadAll", {
-        method: "POST",
-    })
+    fetch(window.location.pathname + '/allTasks')
         .then((res) => res.json())
         // Add all the retrieved tasks to the table as rows
         .then((data) => {
@@ -33,7 +31,7 @@ addTaskBtn.addEventListener("click", () => {
     });
 
     // Send newTasks to server and wait for acknowledgement and task details
-    fetch(window.location.pathname + "?action=add", {
+    fetch(window.location.pathname, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -56,8 +54,8 @@ const deleteTask = (rowElement) => {
     // get taskId and send to server
     const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
     // Send taskId to server for validation
-    fetch(window.location.pathname + "?action=delete", {
-        method: "POST",
+    fetch(window.location.pathname, {
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
         },
@@ -81,11 +79,11 @@ const setTaskStatus = (rowElement, status) => {
     // get taskId and send to server
     const taskId = Number(rowElement.cells[0].textContent); //get the task ID.
     fetch(window.location.pathname + "?action=statusChange", {
-        method: "POST",
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ taskId: taskId, status: status }),
+        body: JSON.stringify({ taskId: taskId, name: undefined, status: status }),
     })
         .then((res) => res.json())
         .then((data) => {
@@ -121,11 +119,11 @@ const editTask = (rowElement) => {
             taskCell.textContent = input.value;
             const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
             fetch(window.location.pathname + "?action=taskChange", {
-                method: "POST",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({taskId: taskId, name: input.value}),
+                body: JSON.stringify({taskId: taskId, name: input.value, status: undefined}),
             })
                 .then((res) => res.json())
                 .then((data) => {
@@ -149,8 +147,12 @@ const editTask = (rowElement) => {
 // Delete all tasks
 clearAllBtn.addEventListener("click", () => {
     // let the server know
-    fetch(window.location.pathname + "?action=deleteAll", {
-        method: "POST"
+    fetch(window.location.pathname, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({taskId: -1}),
     })
         .then((res) => res.json())
         .then((data) => {
