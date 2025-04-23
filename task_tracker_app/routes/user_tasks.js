@@ -42,7 +42,7 @@ router.delete('/', (req, res) => {
 });
 
 // Edit a task via a PUT request
-router.put('/', (req, res) => {
+router.patch('/', (req, res) => {
     const data = req.body;
     try {
         res.send(taskController.changeTask(data));

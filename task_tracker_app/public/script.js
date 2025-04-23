@@ -79,7 +79,7 @@ const setTaskStatus = (rowElement, status) => {
     // get taskId and send to server
     const taskId = Number(rowElement.cells[0].textContent); //get the task ID.
     fetch(window.location.pathname + "?action=statusChange", {
-        method: "PUT",
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
@@ -119,7 +119,7 @@ const editTask = (rowElement) => {
             taskCell.textContent = input.value;
             const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
             fetch(window.location.pathname + "?action=taskChange", {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
