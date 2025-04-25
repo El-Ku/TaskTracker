@@ -1,58 +1,59 @@
-let tasks = [];
-let latestIndex = 0;
-const TaskStatus = require('../public/CONSTANTS').TaskStatus;
+const asyncHandler = require('express-async-handler');
+const Tasks = require('../models/taskModel');
 
-function loadAll() {
-    return tasks;
-}
+// Load all tasks. Called when webpage loads first
+const loadAll = asyncHandler(async (req, res) => {
+    const tasks = await Tasks.find();
+    res.json(tasks);
+}) 
 
-function addTasks(taskNames) {
-    const newTasks = [];
-    taskNames.forEach(task => {
-        newTasks.push({
-            id: latestIndex++,
-            name: task.name,
-            time: Date.now(),
-            status: TaskStatus.PENDING
-        });
-    });
-    tasks.push(...newTasks);
-    return newTasks;
-}
+// Add one or more tasks to the database
+const addTasks = asyncHandler(async (req, res) => {
+    const newTasks = req.body.map(task => ({
+        desc: task.desc
+    }));
+    const tasks = await Tasks.insertMany(newTasks);
+    res.json(tasks);
+});
 
-function deleteTask(_taskId) {
-    const { taskId } = _taskId;
-    if (taskId === -1) {
-        tasks = [];
-        latestIndex = 0;
-        return 1;
-    } else {
-        const index = tasks.findIndex((task) => task.id === taskId);
-        if (index === -1) return -1;
-        else {
-            tasks.splice(index, 1);
-            return 1;
+// Delete all tasks in database
+const deleteAll = asyncHandler(async (req, res) => {
+    const {acknowledged, deletedCount} = await Tasks.deleteMany({});
+    if(acknowledged) {
+        if(deletedCount > 0) {
+            res.send(`All ${deletedCount} tasks were deleted from the database`);
+        } else {
+            res.send(`There were no tasks in the database to delete`);
         }
+    } else {
+        res.status(404);
+        throw new Error("Couldnt delete any tasks from the database");
     }
-}
+});
 
-function changeTask(data) {
-    const {taskId, name, status} = data;
-    const index = tasks.findIndex((task) => task.id === taskId);
-    if(index === -1)   // taskId doesnt exist
-        return -1;   
-    else {
-        if(name !== undefined)
-            tasks[index].name = name;
-        else if(status !== undefined)
-            tasks[index].status = status;
-        return 1;
+// Delete a single task
+const deleteTask = asyncHandler(async (req, res) => {
+    await Tasks.findByIdAndDelete(req.params.id); //
+    res.send("The selected task was deleted successfully");
+});
+
+// Modify a single task
+const changeTask = asyncHandler(async (req, res) => {
+    const task = await Tasks.findByIdAndUpdate(req.params.id, req.body, {
+        new: true, // return the updated document
+        runValidators: true, // validate according to schema
+    });
+    if(!task) {
+        res.status(404);
+        throw new Error("Task ID not found on our server. Unable to update the task");
     }
-}
+    res.json(task);
+});
 
 module.exports = {
     loadAll,
     addTasks,
     deleteTask,
+    deleteAll,
     changeTask
 }

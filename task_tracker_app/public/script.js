@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add all the retrieved tasks to the table as rows
         .then((data) => {
             tasks = data;
+            console.log(tasks)
             addRows(data);
         })
         .catch((err) => console.error("Error in Loading all Tasks:", err));
@@ -25,8 +26,12 @@ addTaskBtn.addEventListener("click", () => {
     taskItems = taskItems.split(","); //get an array of tasks if entered as comma separated
     const newTasks = [];
     taskItems.forEach((taskItem) => {
+        if (taskItem === "") {
+            alert("Task description cannot be empty");
+            return;
+        }
         newTasks.push({
-            name: taskItem
+            desc: taskItem
         });
     });
 
@@ -50,58 +55,44 @@ addTaskBtn.addEventListener("click", () => {
 
 
 // remove a row from the table and delete the property from the tasks object
-const deleteTask = (rowElement) => {
-    // get taskId and send to server
-    const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
+const deleteTask = (rowElement, id) => {
     // Send taskId to server for validation
-    fetch(window.location.pathname, {
+    fetch(`${window.location.pathname}/${id}`, {
         method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({taskId: taskId}),
     })
-        .then((res) => res.json())
+        .then((res) => res.text())
         .then((data) => {
-            if(data === -1) {
-                throw Error("This taskId doesnt exist in our database");
-            } else {
-                const arrIndex = tasks.findIndex((task) => task.id === taskId);
-                tasks.splice(arrIndex, 1);  //remove from array
-                rowElement.remove();  //remove the row from the table
-            }
+            const arrIndex = tasks.findIndex((task) => task._id === id);
+            tasks.splice(arrIndex, 1); //remove from array
+            rowElement.remove(); //remove the row from the table
         })
-        .catch((err) => console.error("Error in Adding a Task:", err));
+        .catch((err) =>
+            console.error("Error in Deleting the selected Task:", err)
+        );
 };
 
 // mark a task as "done" and change its backgroundcolor to green
-const setTaskStatus = (rowElement, status) => {
-    // get taskId and send to server
-    const taskId = Number(rowElement.cells[0].textContent); //get the task ID.
-    fetch(window.location.pathname + "?action=statusChange", {
+const setTaskStatus = (rowElement, status, id) => {
+    fetch(`${window.location.pathname}/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ taskId: taskId, name: undefined, status: status }),
+        body: JSON.stringify({ status: status }),
     })
         .then((res) => res.json())
         .then((data) => {
-            if (data === -1) {
-                throw Error("This taskId doesnt exist in our database");
-            } else {
-                const arrIndex = tasks.findIndex((task) => task.id === taskId);
-                tasks[arrIndex].status = status; //change status in local memory
-                redoTableRows();
-            }
+            const arrIndex = tasks.findIndex((task) => task._id === id);
+            tasks[arrIndex].status = status; //change status in local memory
+            redoTableRows();
         })
-        .catch((err) => console.error("Error in Adding a Task:", err));
+        .catch((err) => console.error("Error in Updating the Task:", err));
 };
 
 // edit a task right from the table. 
 // Press "Enter" key to save the change or "Escape" to cancel the edit
-const editTask = (rowElement) => {
-    const taskCell = rowElement.cells[1]; //2nd cell holds task name
+const editTask = (rowElement, id) => {
+    const taskCell = rowElement.cells[0]; //2nd cell holds task name
     const currentTask = taskCell.textContent;
     // Create input box
     const input = document.createElement("input");
@@ -116,27 +107,31 @@ const editTask = (rowElement) => {
     input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             // get taskID and new task name and send to server
-            taskCell.textContent = input.value;
-            const taskId = Number(rowElement.cells[0].textContent);  //get the task ID.
-            fetch(window.location.pathname + "?action=taskChange", {
+            const newDesc = input.value;
+            if (newDesc === "") {
+                alert("Task description cannot be empty");
+                taskCell.textContent = currentTask;
+                return;
+            }
+            taskCell.textContent = newDesc;
+            fetch(`${window.location.pathname}/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({taskId: taskId, name: input.value, status: undefined}),
+                body: JSON.stringify({desc: newDesc}),
             })
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data === -1) {
-                        throw Error("This taskId doesnt exist in our database");
+                .then((res) => {
+                    if(res.status == 200) {
+                        const arrIndex = tasks.findIndex((task) => task._id === id);
+                        tasks[arrIndex].desc = newDesc;  //change name in local memory
                     } else {
-                        const arrIndex = tasks.findIndex((task) => task.id === taskId);
-                        tasks[arrIndex].name = input.value;  //change name in local memory
+                        throw new Error(res.status);
                     }
                 })
                 .catch((err) => {
                     taskCell.textContent = currentTask;
-                    console.error("Error in Adding a Task:", err);
+                    console.error("Error in updating the Task:", err);
                 });
         } else if (e.key === "Escape") {
             taskCell.textContent = currentTask;
@@ -147,23 +142,15 @@ const editTask = (rowElement) => {
 // Delete all tasks
 clearAllBtn.addEventListener("click", () => {
     // let the server know
-    fetch(window.location.pathname, {
+    fetch(window.location.pathname + "/allTasks", {
         method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({taskId: -1}),
     })
-        .then((res) => res.json())
+        .then((res) => res.text())
         .then((data) => {
-            if(data !== 1) {
-                throw Error("Unable to delete all tasks from our database");
-            } else {
-                tasks = [];
-                document.getElementById("taskTableBody").innerHTML = "";  // clear the table
-            }
+            tasks = [];
+            document.getElementById("taskTableBody").innerHTML = ""; // clear the table
         })
-        .catch((err) => console.error("Error in Adding a Task:", err));  
+        .catch((err) => console.error("Error in Clearing all Tasks:", err));
 });
 
 const redoTableRows = () => {
@@ -185,46 +172,42 @@ const addRow = (task) => {
     // add text cells to the row
     let cell; 
     let text;
-    // add id to the table
-    cell = row.insertCell();
-    text = document.createTextNode(task.id);
-    cell.appendChild(text);
     // add task name to the table
     cell = row.insertCell();
-    text = document.createTextNode(task.name);
+    text = document.createTextNode(task.desc);
     cell.appendChild(text);
     // add date to the table
     cell = row.insertCell();
     text = document.createTextNode(formatDate(task.time));
     cell.appendChild(text);
     // Add buttons in actions cell
-    addButtons(row, task.status);
+    addButtons(row, task.status, task._id)
 };
 
-const addButtons = (row, status) => {
+const addButtons = (row, status, id) => {
     let cell = row.insertCell();
     // Add Done button
-    addEventListenersToButton(row, cell, TaskStatus.DONE, "Done", "doneBtn", status);
+    addEventListenersToButton(row, cell, TaskStatus.DONE, "Done", "doneBtn", status, id);
     // Add Pause button
-    addEventListenersToButton(row, cell, TaskStatus.PAUSED, "Pause", "pauseBtn", status);
+    addEventListenersToButton(row, cell, TaskStatus.PAUSED, "Pause", "pauseBtn", status, id);
     // Add Undone button (don/paused to pending)
-    addEventListenersToButton(row, cell, TaskStatus.PENDING, "toDo", "undoneBtn", status);
+    addEventListenersToButton(row, cell, TaskStatus.PENDING, "toDo", "undoneBtn", status, id);
     // add delete button
-    addEventListenersToButton(undefined, cell, "Delete", "Delete", "deleteBtn", undefined);
+    addEventListenersToButton(undefined, cell, "Delete", "Delete", "deleteBtn", undefined, id);
     // add Edit button
-    addEventListenersToButton(undefined, cell, "Edit", "Edit", "editBtn", undefined);
+    addEventListenersToButton(undefined, cell, "Edit", "Edit", "editBtn", undefined, id);
 }
 
-const addEventListenersToButton = (row, cell, statusText, hoverText, className, status) => {
+const addEventListenersToButton = (row, cell, statusText, hoverText, className, status, id) => {
     let btn = document.createElement("button");
     btn.textContent = ButtonText[statusText];
     btn.addEventListener("click", () => {
         if(statusText == "Delete") {
-            deleteTask(btn.parentElement.parentElement);
+            deleteTask(btn.parentElement.parentElement, id);
         } else if(statusText == "Edit") {
-            editTask(btn.parentElement.parentElement);
+            editTask(btn.parentElement.parentElement, id);
         } else {
-            setTaskStatus(btn.parentElement.parentElement, statusText);
+            setTaskStatus(btn.parentElement.parentElement, statusText, id);
             redoTableRows();
         }
     })

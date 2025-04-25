@@ -9,5 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vipin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express-async-handler": "^1.2.0",
+    "mongoose": "^8.13.2"
+  }
 }
