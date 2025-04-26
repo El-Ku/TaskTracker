@@ -1,6 +1,8 @@
-const dotenv = require('dotenv');
-const express = require('express');
-const connectDB = require('./config/db');
+import dotenv from 'dotenv';
+import express from 'express';
+import connectDB from './config/db.js';
+import taskRouter from './routes/taskRouter.js';
+import errorHandler from './middleware/errorMiddleware.js';
 
 const app = express();
 const port = 3000;
@@ -14,5 +16,5 @@ app.listen(port, () => {
     console.log(`Task Tracker App listening on port ${port}`)
 });
 
-const userRouter = require('./routes/user_tasks');
-app.use('/:userName/tasks',userRouter);
+app.use('/:userName/tasks',taskRouter);
+app.use(errorHandler);  // very important to place it at the very end to catch all errors.

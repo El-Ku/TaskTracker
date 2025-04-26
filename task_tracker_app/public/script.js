@@ -9,14 +9,17 @@ const clearAllBtn = document.getElementById("clearBtn");
 document.addEventListener("DOMContentLoaded", () => {
     //get table data from the server
     fetch(window.location.pathname + '/allTasks')
-        .then((res) => res.json())
+        .then((res) => handleError(res))
         // Add all the retrieved tasks to the table as rows
         .then((data) => {
-            tasks = data;
-            console.log(tasks)
-            addRows(data);
+            const {result, message, payload} = data;
+            if(result !== "error") {
+                tasks = payload;
+                addRows(payload);
+            }
+            console.log(`${result} : ${message}`);
         })
-        .catch((err) => console.error("Error in Loading all Tasks:", err));
+        .catch((err) => console.error(err));
 });
 
 // what happens when you click the add Task button is specified here.
@@ -43,12 +46,14 @@ addTaskBtn.addEventListener("click", () => {
         },
         body: JSON.stringify(newTasks),
     })
-        .then((res) => res.json())
+        .then((res) => handleError(res))
         .then((data) => {
-            tasks.push(...data); // Append newTasks into tasks array
-            addRows(data);  // Populate the table with newTasks.
+            const {result, message, payload} = data;
+            console.log(`${result} : ${message}`);
+            addRows(payload);
+            tasks.push(...payload);
         })
-        .catch((err) => console.error("Error in Adding a Task:", err));
+        .catch((err) => console.error(err));
     //clear the input text box.
     document.getElementById("taskInput").value = "";
 });
@@ -60,15 +65,17 @@ const deleteTask = (rowElement, id) => {
     fetch(`${window.location.pathname}/${id}`, {
         method: "DELETE",
     })
-        .then((res) => res.text())
+        .then((res) => handleError(res))
         .then((data) => {
-            const arrIndex = tasks.findIndex((task) => task._id === id);
-            tasks.splice(arrIndex, 1); //remove from array
-            rowElement.remove(); //remove the row from the table
+            const { result, message } = data;
+            console.log(`${result} : ${message}`);
+            if (result === "success") {
+                const arrIndex = tasks.findIndex((task) => task._id === id);
+                tasks.splice(arrIndex, 1); //remove from array
+                rowElement.remove(); //remove the row from the table
+            }
         })
-        .catch((err) =>
-            console.error("Error in Deleting the selected Task:", err)
-        );
+        .catch((err) => console.error(err));
 };
 
 // mark a task as "done" and change its backgroundcolor to green
@@ -80,13 +87,17 @@ const setTaskStatus = (rowElement, status, id) => {
         },
         body: JSON.stringify({ status: status }),
     })
-        .then((res) => res.json())
+        .then((res) => handleError(res))
         .then((data) => {
-            const arrIndex = tasks.findIndex((task) => task._id === id);
-            tasks[arrIndex].status = status; //change status in local memory
-            redoTableRows();
+            const { result, message } = data;
+            console.log(`${result} : ${message}`);
+            if (result === "success") {
+                const arrIndex = tasks.findIndex((task) => task._id === id);
+                tasks[arrIndex].status = status; //change status in local memory
+                redoTableRows();
+            }
         })
-        .catch((err) => console.error("Error in Updating the Task:", err));
+        .catch((err) => console.error(err));
 };
 
 // edit a task right from the table. 
@@ -121,17 +132,18 @@ const editTask = (rowElement, id) => {
                 },
                 body: JSON.stringify({desc: newDesc}),
             })
-                .then((res) => {
-                    if(res.status == 200) {
+                .then((res) => handleError(res))
+                .then((data) => {
+                    const { result, message } = data;
+                    console.log(`${result} : ${message}`);
+                    if (result === "success") {
                         const arrIndex = tasks.findIndex((task) => task._id === id);
                         tasks[arrIndex].desc = newDesc;  //change name in local memory
-                    } else {
-                        throw new Error(res.status);
                     }
                 })
                 .catch((err) => {
                     taskCell.textContent = currentTask;
-                    console.error("Error in updating the Task:", err);
+                    console.error(err);
                 });
         } else if (e.key === "Escape") {
             taskCell.textContent = currentTask;
@@ -145,12 +157,16 @@ clearAllBtn.addEventListener("click", () => {
     fetch(window.location.pathname + "/allTasks", {
         method: "DELETE",
     })
-        .then((res) => res.text())
+        .then((res) => handleError(res))
         .then((data) => {
-            tasks = [];
-            document.getElementById("taskTableBody").innerHTML = ""; // clear the table
+            const { result, message } = data;
+            console.log(`${result} : ${message}`);
+            if (result === "success") {
+                tasks = [];
+                document.getElementById("taskTableBody").innerHTML = ""; // clear the table
+            } 
         })
-        .catch((err) => console.error("Error in Clearing all Tasks:", err));
+        .catch((err) => console.error(err));
 });
 
 const redoTableRows = () => {
@@ -241,4 +257,13 @@ const formatDate = (timestamp) => {
     });
     return formatted;
 };
+
+const handleError = async function(res) {
+    if(res.status !== 200) {
+        const {result, message} = await res.json();
+        throw new Error(`${result} : ${message}`);
+    } else {
+        return res.json();
+    } 
+}
 
