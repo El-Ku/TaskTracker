@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Task Manager</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/task.css" />
 </head>
 <body>
   <div class="container">
@@ -12,6 +12,7 @@
       <input type="text" id="taskInput" placeholder="Enter a task or comma separated multiple tasks" />
       <button id="addBtn">Add</button>
     </div>
+
 
     <div class="header-row">
       <h2>My Tasks</h2>
@@ -29,8 +30,13 @@
         <!-- Task rows are added here via JS -->
       </tbody>
     </table>
+
+    <div class="bottom-row">
+      <button id="profileBtn">Back to Profile</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
   </div>
 
-  <script type="module" src="/script.js"></script>
+  <script type=module src="/js/task.js"></script>
 </body>
 </html>

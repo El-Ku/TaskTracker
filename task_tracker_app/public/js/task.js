@@ -1,14 +1,21 @@
-import {TaskStatus, ButtonText, CSS_PROP} from './CONSTANTS.js';
+import {TaskStatus, ButtonText, CSS_PROP} from '/js/CONSTANTS.js';
 
 document.documentElement.style.setProperty('--btn-font-size', CSS_PROP['--btn-font-size']);
 
 let tasks = [];  //contains all the individual task objects
 const addTaskBtn = document.getElementById("addBtn");
 const clearAllBtn = document.getElementById("clearBtn");
+const profileBtn = document.getElementById("profileBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const token = localStorage.getItem('token');
 
 document.addEventListener("DOMContentLoaded", () => {
     //get table data from the server
-    fetch(window.location.pathname + '/allTasks')
+    fetch('/api/tasks/allTasks', {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+    })
         .then((res) => handleError(res))
         // Add all the retrieved tasks to the table as rows
         .then((data) => {
@@ -28,7 +35,7 @@ addTaskBtn.addEventListener("click", () => {
     let taskItems = document.getElementById("taskInput").value;
     taskItems = taskItems.split(","); //get an array of tasks if entered as comma separated
     const newTasks = [];
-    taskItems.forEach((taskItem) => {
+    for (const taskItem of taskItems) {
         if (taskItem === "") {
             alert("Task description cannot be empty");
             return;
@@ -36,13 +43,14 @@ addTaskBtn.addEventListener("click", () => {
         newTasks.push({
             desc: taskItem
         });
-    });
+    };
 
     // Send newTasks to server and wait for acknowledgement and task details
-    fetch(window.location.pathname, {
+    fetch('/api/tasks/', {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(newTasks),
     })
@@ -62,8 +70,11 @@ addTaskBtn.addEventListener("click", () => {
 // remove a row from the table and delete the property from the tasks object
 const deleteTask = (rowElement, id) => {
     // Send taskId to server for validation
-    fetch(`${window.location.pathname}/${id}`, {
+    fetch(`/api/tasks/${id}`, {
         method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
     })
         .then((res) => handleError(res))
         .then((data) => {
@@ -80,10 +91,11 @@ const deleteTask = (rowElement, id) => {
 
 // mark a task as "done" and change its backgroundcolor to green
 const setTaskStatus = (rowElement, status, id) => {
-    fetch(`${window.location.pathname}/${id}`, {
+    fetch(`/api/tasks/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ status: status }),
     })
@@ -125,10 +137,11 @@ const editTask = (rowElement, id) => {
                 return;
             }
             taskCell.textContent = newDesc;
-            fetch(`${window.location.pathname}/${id}`, {
+            fetch(`/api/tasks/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({desc: newDesc}),
             })
@@ -154,8 +167,11 @@ const editTask = (rowElement, id) => {
 // Delete all tasks
 clearAllBtn.addEventListener("click", () => {
     // let the server know
-    fetch(window.location.pathname + "/allTasks", {
+    fetch('/api/tasks/allTasks', {
         method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
     })
         .then((res) => handleError(res))
         .then((data) => {
@@ -167,6 +183,16 @@ clearAllBtn.addEventListener("click", () => {
             } 
         })
         .catch((err) => console.error(err));
+});
+
+profileBtn.addEventListener("click", () => {
+    window.location.href = '/profile.html';
+});
+
+logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    window.location.href = "/login.html";
 });
 
 const redoTableRows = () => {

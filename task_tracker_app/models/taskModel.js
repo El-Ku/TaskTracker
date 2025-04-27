@@ -5,7 +5,6 @@ const taskSchema = mongoose.Schema(
         desc: {
             type: String,
             required: true,
-            unique: true
         },
         time: {
             type: Date,
@@ -14,6 +13,10 @@ const taskSchema = mongoose.Schema(
         status: {
             type: String,
             default: 'pending'
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         }
     },
     {

@@ -69,6 +69,13 @@ thead {
 .header-row {
   display: flex;
   align-items: center;       /* vertically center */
-  justify-content: space-between; /* puts h2 left and button right */
+  justify-content: space-between; 
   margin-bottom: 10px;
+}
+
+.bottom-row {
+  display: flex;
+  align-items: center;       /* vertically center */
+  justify-content: space-between; 
+  margin-top: 20px;
 }

@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import protect from '../middleware/protectMiddleware.js';
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());
@@ -13,12 +14,8 @@ import {
     changeTask
 } from '../controllers/taskController.js';
 
-// get request for the public tasks file.
-router.get('/', (req, res) => {
-    const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-    const __dirname = path.dirname(__filename); // get the name of the directory
-    res.sendFile(path.join(__dirname, '..', 'public/tasks.html'));
-});
+// Apply `protect` to _all_ subsequent routes
+router.use(protect);
 
 router
     .route("/allTasks")
