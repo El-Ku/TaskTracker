@@ -1,4 +1,6 @@
 import express from 'express';
+import validate from '../middleware/validateMiddleware.js';
+import { userAuthInfo } from '../validation/joiSchema.js';
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());
@@ -10,10 +12,10 @@ import {
 
 router
     .route('/register')
-    .post(registerUser);
+    .post(validate(userAuthInfo, 'body'), registerUser);  //validate before registering the user
 
 router
     .route('/login')
-    .post(loginUser);
+    .post(loginUser);  //doesnt need validation here
 
 export default router;

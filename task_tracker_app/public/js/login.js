@@ -2,6 +2,7 @@ const loginTab = document.getElementById('loginTab');
 const registerTab = document.getElementById('registerTab');
 const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
+const errorBox = document.getElementById('errorBox');
 
 loginTab.addEventListener('click', () => {
   loginTab.classList.add('active');
@@ -17,8 +18,9 @@ registerTab.addEventListener('click', () => {
   loginForm.style.display = 'none';
 });
 
-registerForm.addEventListener('submit', (event) => {
+registerForm.addEventListener('submit', async (event) => {
     event.preventDefault(); // stops the page from refreshing
+    console.log("register clicked")
     const formData = new FormData(registerForm);
     if(formData.get('password') !== formData.get('confirmPassword')) {
         alert("The passwords does not match");

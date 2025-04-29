@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { TaskStatus } from '../public/js/CONSTANTS.js';
 
 const taskSchema = mongoose.Schema(
     {
@@ -12,7 +13,8 @@ const taskSchema = mongoose.Schema(
         },
         status: {
             type: String,
-            default: 'pending'
+            enum: Object.values(TaskStatus), 
+            default: TaskStatus.PENDING
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,

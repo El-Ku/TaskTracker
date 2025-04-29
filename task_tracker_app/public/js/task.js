@@ -1,26 +1,29 @@
-import {TaskStatus, ButtonText, CSS_PROP} from '/js/CONSTANTS.js';
+import { TaskStatus, ButtonText, CSS_PROP } from "/js/CONSTANTS.js";
 
-document.documentElement.style.setProperty('--btn-font-size', CSS_PROP['--btn-font-size']);
+document.documentElement.style.setProperty(
+    "--btn-font-size",
+    CSS_PROP["--btn-font-size"]
+);
 
-let tasks = [];  //contains all the individual task objects
+let tasks = []; //contains all the individual task objects
 const addTaskBtn = document.getElementById("addBtn");
 const clearAllBtn = document.getElementById("clearBtn");
 const profileBtn = document.getElementById("profileBtn");
 const logoutBtn = document.getElementById("logoutBtn");
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 document.addEventListener("DOMContentLoaded", () => {
     //get table data from the server
-    fetch('/api/tasks/allTasks', {
+    fetch("/api/tasks/allTasks", {
         headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
     })
         .then((res) => handleError(res))
         // Add all the retrieved tasks to the table as rows
         .then((data) => {
-            const {result, message, payload} = data;
-            if(result !== "error") {
+            const { result, message, payload } = data;
+            if (result !== "error") {
                 tasks = payload;
                 addRows(payload);
             }
@@ -33,7 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 addTaskBtn.addEventListener("click", () => {
     // Get input value and store it in an array called new Tasks
     let taskItems = document.getElementById("taskInput").value;
-    taskItems = taskItems.split(","); //get an array of tasks if entered as comma separated
+    //get an array of tasks if entered as comma separated, remove spaces
+    taskItems = taskItems.split(",").map(task => task.trim()); 
     const newTasks = [];
     for (const taskItem of taskItems) {
         if (taskItem === "") {
@@ -41,22 +45,22 @@ addTaskBtn.addEventListener("click", () => {
             return;
         }
         newTasks.push({
-            desc: taskItem
+            desc: taskItem,
         });
-    };
+    }
 
     // Send newTasks to server and wait for acknowledgement and task details
-    fetch('/api/tasks/', {
+    fetch("/api/tasks/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTasks),
     })
         .then((res) => handleError(res))
         .then((data) => {
-            const {result, message, payload} = data;
+            const { result, message, payload } = data;
             console.log(`${result} : ${message}`);
             addRows(payload);
             tasks.push(...payload);
@@ -66,14 +70,13 @@ addTaskBtn.addEventListener("click", () => {
     document.getElementById("taskInput").value = "";
 });
 
-
 // remove a row from the table and delete the property from the tasks object
 const deleteTask = (rowElement, id) => {
     // Send taskId to server for validation
     fetch(`/api/tasks/${id}`, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
     })
         .then((res) => handleError(res))
@@ -95,7 +98,7 @@ const setTaskStatus = (rowElement, status, id) => {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status: status }),
     })
@@ -112,7 +115,7 @@ const setTaskStatus = (rowElement, status, id) => {
         .catch((err) => console.error(err));
 };
 
-// edit a task right from the table. 
+// edit a task right from the table.
 // Press "Enter" key to save the change or "Escape" to cancel the edit
 const editTask = (rowElement, id) => {
     const taskCell = rowElement.cells[0]; //2nd cell holds task name
@@ -141,17 +144,19 @@ const editTask = (rowElement, id) => {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({desc: newDesc}),
+                body: JSON.stringify({ desc: newDesc }),
             })
                 .then((res) => handleError(res))
                 .then((data) => {
                     const { result, message } = data;
                     console.log(`${result} : ${message}`);
                     if (result === "success") {
-                        const arrIndex = tasks.findIndex((task) => task._id === id);
-                        tasks[arrIndex].desc = newDesc;  //change name in local memory
+                        const arrIndex = tasks.findIndex(
+                            (task) => task._id === id
+                        );
+                        tasks[arrIndex].desc = newDesc; //change name in local memory
                     }
                 })
                 .catch((err) => {
@@ -167,10 +172,10 @@ const editTask = (rowElement, id) => {
 // Delete all tasks
 clearAllBtn.addEventListener("click", () => {
     // let the server know
-    fetch('/api/tasks/allTasks', {
+    fetch("/api/tasks/allTasks", {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
     })
         .then((res) => handleError(res))
@@ -180,13 +185,13 @@ clearAllBtn.addEventListener("click", () => {
             if (result === "success") {
                 tasks = [];
                 document.getElementById("taskTableBody").innerHTML = ""; // clear the table
-            } 
+            }
         })
         .catch((err) => console.error(err));
 });
 
 profileBtn.addEventListener("click", () => {
-    window.location.href = '/profile.html';
+    window.location.href = "/profile.html";
 });
 
 logoutBtn.addEventListener("click", () => {
@@ -196,23 +201,23 @@ logoutBtn.addEventListener("click", () => {
 });
 
 const redoTableRows = () => {
-    document.getElementById("taskTableBody").innerHTML = ""; 
+    document.getElementById("taskTableBody").innerHTML = "";
     addRows(tasks);
-}
+};
 
 // Function to add multiple rows
 const addRows = (tasks) => {
     tasks.forEach((task) => {
         addRow(task);
-    })
-}
+    });
+};
 
 // Function for adding a single row to the table.
 const addRow = (task) => {
     let tbody = document.getElementById("taskTableBody");
     let row = tbody.insertRow();
     // add text cells to the row
-    let cell; 
+    let cell;
     let text;
     // add task name to the table
     cell = row.insertCell();
@@ -223,44 +228,92 @@ const addRow = (task) => {
     text = document.createTextNode(formatDate(task.time));
     cell.appendChild(text);
     // Add buttons in actions cell
-    addButtons(row, task.status, task._id)
+    addButtons(row, task.status, task._id);
 };
 
 const addButtons = (row, status, id) => {
     let cell = row.insertCell();
     // Add Done button
-    addEventListenersToButton(row, cell, TaskStatus.DONE, "Done", "doneBtn", status, id);
+    addEventListenersToButton(
+        row,
+        cell,
+        TaskStatus.DONE,
+        "Done",
+        "doneBtn",
+        status,
+        id
+    );
     // Add Pause button
-    addEventListenersToButton(row, cell, TaskStatus.PAUSED, "Pause", "pauseBtn", status, id);
+    addEventListenersToButton(
+        row,
+        cell,
+        TaskStatus.PAUSED,
+        "Pause",
+        "pauseBtn",
+        status,
+        id
+    );
     // Add Undone button (don/paused to pending)
-    addEventListenersToButton(row, cell, TaskStatus.PENDING, "toDo", "undoneBtn", status, id);
+    addEventListenersToButton(
+        row,
+        cell,
+        TaskStatus.PENDING,
+        "toDo",
+        "undoneBtn",
+        status,
+        id
+    );
     // add delete button
-    addEventListenersToButton(undefined, cell, "Delete", "Delete", "deleteBtn", undefined, id);
+    addEventListenersToButton(
+        undefined,
+        cell,
+        "Delete",
+        "Delete",
+        "deleteBtn",
+        undefined,
+        id
+    );
     // add Edit button
-    addEventListenersToButton(undefined, cell, "Edit", "Edit", "editBtn", undefined, id);
-}
+    addEventListenersToButton(
+        undefined,
+        cell,
+        "Edit",
+        "Edit",
+        "editBtn",
+        undefined,
+        id
+    );
+};
 
-const addEventListenersToButton = (row, cell, statusText, hoverText, className, status, id) => {
+const addEventListenersToButton = (
+    row,
+    cell,
+    statusText,
+    hoverText,
+    className,
+    status,
+    id
+) => {
     let btn = document.createElement("button");
     btn.textContent = ButtonText[statusText];
     btn.addEventListener("click", () => {
-        if(statusText == "Delete") {
+        if (statusText == "Delete") {
             deleteTask(btn.parentElement.parentElement, id);
-        } else if(statusText == "Edit") {
+        } else if (statusText == "Edit") {
             editTask(btn.parentElement.parentElement, id);
         } else {
             setTaskStatus(btn.parentElement.parentElement, statusText, id);
             redoTableRows();
         }
-    })
+    });
     btn.addEventListener("mouseover", () => {
         btn.textContent = hoverText;
-        btn.style.fontSize = CSS_PROP['--btn-small-font-size'];
-    })
+        btn.style.fontSize = CSS_PROP["--btn-small-font-size"];
+    });
     btn.addEventListener("mouseleave", () => {
         btn.textContent = ButtonText[statusText];
-        btn.style.fontSize = CSS_PROP['--btn-font-size'];
-    })
+        btn.style.fontSize = CSS_PROP["--btn-font-size"];
+    });
     btn.className = className;
     if (status == TaskStatus.DONE && statusText == TaskStatus.DONE) {
         row.style.backgroundColor = "green";
@@ -268,12 +321,15 @@ const addEventListenersToButton = (row, cell, statusText, hoverText, className, 
     } else if (status == TaskStatus.PAUSED && statusText == TaskStatus.PAUSED) {
         row.style.backgroundColor = "yellow";
         btn.disabled = true;
-    } else if (status == TaskStatus.PENDING && statusText == TaskStatus.PENDING) {
+    } else if (
+        status == TaskStatus.PENDING &&
+        statusText == TaskStatus.PENDING
+    ) {
         row.style.backgroundColor = "white";
         btn.disabled = true;
     }
     cell.appendChild(btn);
-}
+};
 
 // format the date number to display on the table in a human readable format
 const formatDate = (timestamp) => {
@@ -284,12 +340,11 @@ const formatDate = (timestamp) => {
     return formatted;
 };
 
-const handleError = async function(res) {
-    if(res.status !== 200) {
-        const {result, message} = await res.json();
+const handleError = async function (res) {
+    if (res.status !== 200) {
+        const { result, message } = await res.json();
         throw new Error(`${result} : ${message}`);
     } else {
         return res.json();
-    } 
-}
-
+    }
+};
