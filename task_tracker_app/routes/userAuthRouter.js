@@ -1,6 +1,12 @@
 import express from 'express';
-import validate from '../middleware/validateMiddleware.js';
-import { userAuthInfo } from '../validation/joiSchema.js';
+import validate from "../middleware/validateMiddleware.js";
+import {
+    shortTermLoginLimiter,
+    longTermLoginLimiter,
+    shortTermUserRegLimiter,
+    longTermUserRegLimiter
+} from "../middleware/rateLimitMiddleware";
+import { userAuthInfo } from "../validation/joiSchema.js";
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());
@@ -12,10 +18,10 @@ import {
 
 router
     .route('/register')
-    .post(validate(userAuthInfo, 'body'), registerUser);  //validate before registering the user
+    .post(shortTermUserRegLimiter, longTermUserRegLimiter, validate(userAuthInfo, 'body'), registerUser);  //validate before registering the user
 
 router
     .route('/login')
-    .post(loginUser);  //doesnt need validation here
+    .post(shortTermLoginLimiter, longTermLoginLimiter, loginUser);  //doesnt need validation here
 
 export default router;

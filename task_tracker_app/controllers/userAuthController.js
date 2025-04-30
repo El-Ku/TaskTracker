@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
+import { resetLoginLimiter, resetRegLimiter } from "../middleware/rateLimitMiddleware";
 
 const registerUser = asyncHandler( async(req, res) => {
     const { username, password } = req.body;
@@ -17,6 +18,7 @@ const registerUser = asyncHandler( async(req, res) => {
     }
     const user = await User.create(newUser);
     if(user) {
+        resetRegLimiter(req.ip);  //reset register rate limit
         return res.json({result: "success", message: "User was successfully registered on the system"});
     }
 })
@@ -31,6 +33,7 @@ const loginUser = asyncHandler( async(req, res) => {
     if (!isPasswordMatch) {
         return res.status(400).json({ result: "error", message: 'Invalid username or password' });
     }
+    resetLoginLimiter(req.ip);  //reset login rate limit
     res.json({
         result: "success",
         message: 'User logged in successfully',
