@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './config/db.js';
 import taskRouter from './routes/taskRouter.js';
@@ -8,7 +7,6 @@ import userAuthRouter from './routes/userAuthRouter.js';
 const app = express();
 const port = 3000;
 
-dotenv.config();
 connectDB();
 
 app.use(express.static('public'));
