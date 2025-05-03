@@ -11,9 +11,9 @@ connectDB();
 
 app.use(express.static('public'));
 
-/* app.listen(port, () => {
+app.listen(port, () => {
     console.log(`Task Tracker App listening on port ${port}`)
-}); */
+}); 
 
 app.use('/api/users', userAuthRouter);
 app.use('/api/tasks',taskRouter);
