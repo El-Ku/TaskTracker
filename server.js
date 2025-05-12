@@ -15,6 +15,11 @@ app.listen(port, () => {
     console.log(`Task Tracker App listening on port ${port}`)
 }); 
 
+// Redirect root URL to login.html
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
+
 app.use('/api/users', userAuthRouter);
 app.use('/api/tasks',taskRouter);
 //app.use('/api/:userName/profile',profileRouter);
