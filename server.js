@@ -19,5 +19,3 @@ app.use('/api/users', userAuthRouter);
 app.use('/api/tasks',taskRouter);
 //app.use('/api/:userName/profile',profileRouter);
 app.use(errorHandler);  // very important to place it at the very end to catch all errors.
-
-export default app; // 👈 VERY IMPORTANT
