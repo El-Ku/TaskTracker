@@ -25,6 +25,8 @@ const usernameSchema = Joi.string()
 const userAuthInfo = Joi.object({
   username: usernameSchema,
   password: passwordSchema,
+  currentPassword: passwordSchema,
+  newPassword: passwordSchema,
 });
 
 const dobSchema = Joi.object({

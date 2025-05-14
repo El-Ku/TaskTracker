@@ -13,12 +13,10 @@ const registerUser = asyncHandler(async (req, res) => {
   // check if user already exists in the database
   const userExists = await User.findOne({ username });
   if (userExists) {
-    return res
-      .status(400)
-      .json({
-        result: "error",
-        message: "User already exists. Choose a different username",
-      });
+    return res.status(400).json({
+      result: "error",
+      message: "User already exists. Choose a different username",
+    });
   }
   const hashedPassword = await bcrypt.hash(password, 10); //10 is salt
   const newUser = {
@@ -39,12 +37,10 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
   if (!user) {
-    return res
-      .status(404)
-      .json({
-        result: "error",
-        message: "This user Id doesn't exist in our system",
-      });
+    return res.status(404).json({
+      result: "error",
+      message: "This user Id doesn't exist in our system",
+    });
   }
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
