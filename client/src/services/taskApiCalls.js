@@ -21,11 +21,9 @@ export const deleteTasks = async (id) => {
 };
 
 export const updateTaskStatus = async (id, status) => {
-  const data = await makeApiCall(`/api/tasks/${id}`, "PATCH", { status });
-  return data;
+  return await makeApiCall(`/api/tasks/${id}`, "PATCH", { status });
 };
 
-export const updateTaskDescription = async (id, desc) => {
-  const data = await makeApiCall(`/api/tasks/${id}`, "PATCH", { desc });
-  return data;
+export const updateFieldCallApi = async (id, fieldToUpdate) => {
+  return await makeApiCall(`/api/tasks/${id}`, "PATCH", fieldToUpdate);
 };

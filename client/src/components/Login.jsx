@@ -2,7 +2,6 @@ import React from "react";
 import { useState } from "react";
 import FormField from "./FormField";
 import "../css/login.css";
-import { Form } from "react-router-dom";
 
 const Login = ({ mode }) => {
   const [form, setForm] = useState({
@@ -51,14 +50,12 @@ const Login = ({ mode }) => {
         return;
       }
       if (result == "success") {
-        console.log(data);
         localStorage.setItem("userName", form.username);
         localStorage.setItem("token", token);
         window.location.href = "/profile"; // redirect after success
       }
     } catch (err) {
-      console.log(err);
-      setError("Network error or server issue");
+      setError(`Network error or server issue: ${err}`);
     }
   };
 

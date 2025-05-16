@@ -83,7 +83,7 @@
 .task-table td button {
   font-size: 0.9rem;
   border: none;
-  padding: 2px;
+  margin: 2px;
   border-radius: 6px;
   cursor: pointer;
   background-color: #e0e0e0;

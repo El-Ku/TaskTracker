@@ -1,17 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   getTasks,
   deleteTasks,
   updateTaskStatus,
-  updateTaskDescription,
 } from "../../services/taskApiCalls";
 import { useTasks } from "../../contexts/TasksContext";
 import { ButtonText } from "../../../../CONSTANTS";
+import EditField from "./EditField";
 
 function TaskTable() {
-  const { tasks, setTasks } = useTasks();
-  const [editTaskId, setEditTaskId] = useState(null);
-  const [editValue, setEditValue] = useState("");
+  const { tasks, setTasks, setEditTaskId, setEditValue } = useTasks();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -58,52 +56,10 @@ function TaskTable() {
       <tbody>
         {tasks.map((task) => (
           <tr key={task._id} className={`task-row ${task.status}`}>
-            <td>
-              {editTaskId === task._id ? (
-                <input
-                  type="text"
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      if (!editValue.trim()) {
-                        alert("Task description cannot be empty");
-                        return;
-                      }
-
-                      const data = await updateTaskDescription(
-                        task._id,
-                        editValue
-                      );
-                      if (data.result === "success") {
-                        setTasks((prev) =>
-                          prev.map((t) =>
-                            t._id === task._id ? { ...t, desc: editValue } : t
-                          )
-                        );
-                        setEditTaskId(null); // exit edit mode
-                      }
-                    } else if (e.key === "Escape") {
-                      setEditTaskId(null);
-                    }
-                  }}
-                  autoFocus
-                />
-              ) : (
-                task.desc
-              )}
-            </td>
-            <td>
-              {new Date(task.time).toLocaleString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false,
-              })}
-            </td>
+            {/* Add task description with editable functionality and task created time */}
+            <EditField task={task} propertyToUpdate="desc" />
+            <td>{formatDate(task.time)}</td>
+            {/* Add action buttons */}
             <td>
               {["done", "paused", "pending", "delete"].map((action) => (
                 <button
@@ -129,5 +85,19 @@ function TaskTable() {
     </table>
   );
 }
+
+const formatDate = (date) => {
+  {
+    return new Date(date).toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  }
+};
 
 export default TaskTable;

@@ -1,6 +1,5 @@
 const makeApiCall = async (url, method, body) => {
   const token = localStorage.getItem("token");
-  console.log(token);
 
   try {
     const response = await fetch(url, {

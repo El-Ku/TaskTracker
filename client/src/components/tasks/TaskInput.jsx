@@ -10,6 +10,12 @@ function TaskInput() {
     setTaskInput(e.target.value);
   };
 
+  const addTasksToDatabase = async () => {
+    const newTasks = await addTasks(taskInput);
+    setTasks([...tasks, ...newTasks]);
+    setTaskInput(""); // clear input
+  };
+
   return (
     <div className="task-container">
       <div className="task-input-section">
@@ -19,15 +25,16 @@ function TaskInput() {
           value={taskInput}
           onChange={handleChange}
           placeholder="Enter a single task or comma separated multiple tasks"
-        />
-        <button
-          id="addBtn"
-          onClick={async () => {
-            const newTasks = await addTasks(taskInput);
-            setTasks([...tasks, ...newTasks]);
-            setTaskInput(""); // clear input
+          onKeyDown={async (e) => {
+            if (e.key === "Enter") {
+              addTasksToDatabase();
+            }
+            if (e.key === "Escape") {
+              setTaskInput(""); // clear input
+            }
           }}
-        >
+        />
+        <button id="addBtn" onClick={async () => addTasksToDatabase()}>
           Add
         </button>
       </div>
