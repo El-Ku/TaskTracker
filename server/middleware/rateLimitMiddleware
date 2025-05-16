@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
 const oneSec = 1000;
 const oneMin = 60 * oneSec;
@@ -6,133 +6,84 @@ const oneHour = 60 * oneMin;
 const oneDay = 24 * oneHour;
 
 // Max 3 login attempts in 5 mins.
-export const shortTermLoginLimiter = rateLimit({
-    windowMs: 5 * oneMin, // 5 minutes
-    limit: 3,
-    message: {
-      result: 'error',
-      message: 'Too many continuous failed login attempts. Try again in 5 minutes.',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Max 50 login attempts in a day.
-export const longTermLoginLimiter = rateLimit({
-    windowMs: oneDay, 
-    limit: 50,
-    message: {
-      result: 'error',
-      message: 'Too many continuous failed login attempts. Try again tomorrow',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+export const loginLimiter = rateLimit({
+  windowMs: 5 * oneMin, // 5 minutes
+  limit: 3,
+  message: {
+    result: "error",
+    message:
+      "Too many continuous failed login attempts. Try again in 5 minutes.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 //reset the limits once the user successfully logins.
 export const resetLoginLimiter = (ip) => {
-    shortTermLoginLimiter.resetKey(ip);
-    longTermLoginLimiter.resetKey(ip);
-}
+  loginLimiter.resetKey(ip);
+};
 
 // Max 1 task additions/deleteAll in 2 seconds
-export const shortTermTaskAddDeleteAllLimiter = rateLimit({
-    windowMs: 2 * oneSec,
-    limit: 1,
-    message: {
-      result: 'error',
-      message: 'You are adding or deleting tasks way too fast!',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Max 100 task additions/deleteAll in a day
-export const longTermTaskAddDeleteAllLimiter = rateLimit({
-    windowMs: oneDay,
-    limit: 100,
-    message: {
-      result: 'error',
-      message: 'You are adding or deleting tasks way too fast! Try tomorrow.',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+export const taskAddDeleteAllLimiter = rateLimit({
+  windowMs: 2 * oneSec,
+  limit: 1,
+  message: {
+    result: "error",
+    message: "You are adding or deleting tasks way too fast!",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // Max 10 task delete/edit in 5 seconds
-export const shortTermTaskDeleteEditLimiter = rateLimit({
-    windowMs: 5 * oneSec,
-    limit: 10,
-    message: {
-      result: 'error',
-      message: 'You are editing or deleting tasks way too fast!',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+export const taskDeleteEditLimiter = rateLimit({
+  windowMs: 5 * oneSec,
+  limit: 10,
+  message: {
+    result: "error",
+    message: "You are editing or deleting tasks way too fast!",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-// Max 200 task delete/edit in a day
-export const longTermTaskDeleteEditLimiter = rateLimit({
-    windowMs: oneDay,
-    limit: 200,
-    message: {
-      result: 'error',
-      message: 'You are editing or deleting tasks way too fast! Try tomorrow',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Max 1 user registration in 5 secs. 
-export const shortTermUserRegLimiter = rateLimit({
-    windowMs: 5 * oneSec,
-    limit: 1,
-    message: {
-      result: 'error',
-      message: 'You are trying to register new users way too many times',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Max 100 user registration attempts in a day.
-export const longTermUserRegLimiter = rateLimit({
-    windowMs: oneDay,
-    limit: 100,
-    message: {
-      result: 'error',
-      message: 'You are trying to register new users way too many times. Try tomorrow',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+// Max 1 user registration in 5 secs.
+export const userRegLimiter = rateLimit({
+  windowMs: 5 * oneSec,
+  limit: 1,
+  message: {
+    result: "error",
+    message: "You are trying to register new users way too many times",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 //reset the limits once the user successfully registers.
 export const resetRegLimiter = (ip) => {
-    shortTermUserRegLimiter.resetKey(ip);
-    longTermUserRegLimiter.resetKey(ip);
-}
+  userRegLimiter.resetKey(ip);
+};
 
-// Max 1 refresh per 3 secs. 
-export const shortRefreshLimiter = rateLimit({
-    windowMs: 3 * oneSec,
-    limit: 1,
-    message: {
-      result: 'error',
-      message: 'You are trying to refresh the page way too many times',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+// Max 1 refresh per 3 secs.
+export const refreshLimiter = rateLimit({
+  windowMs: 3 * oneSec,
+  limit: 1,
+  message: {
+    result: "error",
+    message: "You are trying to refresh the page way too many times",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-// Max 1000 refresh in a day.
-export const longRefreshLimiter = rateLimit({
-    windowMs: oneDay,
-    limit: 1000,
-    message: {
-      result: 'error',
-      message: 'You are trying to refresh the page way too many times. Try tomorrow',
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+// Max 3 profile update per 10 secs.
+export const profileUpdateLimiter = rateLimit({
+  windowMs: 10 * oneSec,
+  limit: 3,
+  message: {
+    result: "error",
+    message: "You are trying to update the profile way too many times",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });

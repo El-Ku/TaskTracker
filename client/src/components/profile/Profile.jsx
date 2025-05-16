@@ -1,4 +1,60 @@
 import { useState } from "react";
+import "../../css/Profile.css";
+import ChangePassword from "./ChangePassword";
+import ChangeUserInfo from "./ChangeUserInfo";
+
+function Profile() {
+  const handleUserInfoChange = (e) => {
+    setUserProfileInfo({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const updatePassword = () => {
+    console.log("Password updated", user);
+  };
+
+  const deleteAccount = () => {
+    console.log("Account deleted");
+  };
+
+  return (
+    <div className="profile-container">
+      <div className="top-actions">
+        <button onClick={() => (window.location.href = "/tasks")}>
+          View My Tasks
+        </button>
+        <button
+          onClick={() => {
+            localStorage.removeItem("userName");
+            window.location.href = "/";
+          }}
+        >
+          Logout
+        </button>
+      </div>
+
+      <h1 className="welcome-message">
+        Welcome, {localStorage.getItem("userName") || user.fullName}!
+      </h1>
+      <hr />
+
+      <ChangeUserInfo />
+
+      <div className="section">
+        <h2>Account Settings</h2>
+        <ChangePassword />
+        <hr />
+
+        <button className="delete-btn" onClick={deleteAccount}>
+          Delete Account
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default Profile;
+
+/* import { useState } from "react";
 import updatePassword from "../services/updatePassword";
 import deleteAccount from "../services/deleteAccount";
 import FormField from "./FormField";
@@ -92,3 +148,4 @@ function Profile() {
 }
 
 export default Profile;
+ */

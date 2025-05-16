@@ -49,7 +49,7 @@ function TaskTable() {
       <thead>
         <tr>
           <th className="task-desc">Description</th>
-          <th>Date</th>
+          <th>Created @</th>
           <th>Actions</th>
         </tr>
       </thead>

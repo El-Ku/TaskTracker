@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import FormField from "./FormField";
 import "../css/login.css";
@@ -34,7 +33,7 @@ const Login = ({ mode }) => {
     try {
       const endpoint = mode === "login" ? "login" : "register";
 
-      const response = await fetch(`/api/users/${endpoint}`, {
+      const response = await fetch(`/api/auth/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

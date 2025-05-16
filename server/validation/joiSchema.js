@@ -3,7 +3,7 @@ import joiDate from "@joi/date";
 const Joi = coreJoi.extend(joiDate);
 import { TaskStatus } from "../../CONSTANTS.js";
 
-const mongoObjectId = Joi.object({
+export const mongoObjectId = Joi.object({
   id: Joi.string().pattern(/^[0-9a-fA-F]{24}$/),
 });
 
@@ -22,7 +22,7 @@ const usernameSchema = Joi.string()
   .regex(/[a-zA-Z]/) // Ensure at least one letter (case insensitive)
   .required(); // Make it a required field
 
-const userAuthInfo = Joi.object({
+export const userAuthInfo = Joi.object({
   username: usernameSchema,
   password: passwordSchema,
   currentPassword: passwordSchema,
@@ -32,7 +32,6 @@ const userAuthInfo = Joi.object({
 const dobSchema = Joi.object({
   dob: Joi.date()
     .format("YYYY-MM-DD")
-    .required()
     .messages({
       "date.format": "Invalid date format.  Must be YYYY-MM-DD",
       "any.required": "Date of birth is required",
@@ -41,11 +40,11 @@ const dobSchema = Joi.object({
     .less("2000-01-01"),
 });
 
-const userSchema = Joi.object({
-  firstName: Joi.string().min(2).max(50).required(),
-  lastName: Joi.string().min(2).max(50).required(),
+export const userSchema = Joi.object({
+  fullName: Joi.string().min(2).max(50),
+  lastName: Joi.string().min(2).max(50),
   dob: dobSchema,
-  email: Joi.string().email().required(),
+  email: Joi.string().email(),
 });
 
 const taskDescSchema = Joi.string()
@@ -55,9 +54,7 @@ const taskDescSchema = Joi.string()
 
 const taskStatusSchema = Joi.string().valid(...Object.values(TaskStatus));
 
-const taskSchema = Joi.object({
+export const taskSchema = Joi.object({
   desc: taskDescSchema,
   status: taskStatusSchema,
 });
-
-export { mongoObjectId, userAuthInfo, userSchema, taskSchema };

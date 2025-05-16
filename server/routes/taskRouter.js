@@ -1,43 +1,40 @@
-import express from 'express';
-import protect from '../middleware/protectMiddleware.js';
-import { mongoObjectId, taskSchema } from '../validation/joiSchema.js';
-import validate from '../middleware/validateMiddleware.js';
+import express from "express";
+import protect from "../middleware/protectMiddleware.js";
+import { mongoObjectId, taskSchema } from "../validation/joiSchema.js";
+import validate from "../middleware/validateMiddleware.js";
 import {
-  shortTermTaskAddDeleteAllLimiter,
-  longTermTaskAddDeleteAllLimiter,
-  shortTermTaskDeleteEditLimiter,
-  longTermTaskDeleteEditLimiter,
-  shortRefreshLimiter,
-  longRefreshLimiter
+  taskAddDeleteAllLimiter,
+  taskDeleteEditLimiter,
+  refreshLimiter,
 } from "../middleware/rateLimitMiddleware";
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());
 
 import {
-    loadAll, 
-    addTasks,
-    deleteTask,
-    deleteAll,
-    changeTask
-} from '../controllers/taskController.js';
+  loadAll,
+  addTasks,
+  deleteTask,
+  deleteAll,
+  changeTask,
+} from "../controllers/taskController.js";
 
 // Apply `protect` to _all_ subsequent routes
 router.use(protect);
 
 router
-    .route("/allTasks")
-    .get(shortRefreshLimiter, longRefreshLimiter, loadAll)         // load all tasks
-    .delete(shortTermTaskAddDeleteAllLimiter, longTermTaskAddDeleteAllLimiter, deleteAll);   // delete all tasks
+  .route("/allTasks")
+  .get(refreshLimiter, loadAll) // load all tasks
+  .delete(taskAddDeleteAllLimiter, deleteAll); // delete all tasks
 
 router
   .route("/")
-  .post(shortTermTaskAddDeleteAllLimiter, longTermTaskAddDeleteAllLimiter, validate(taskSchema, 'body'), addTasks);         // Add tasks
+  .post(taskAddDeleteAllLimiter, validate(taskSchema, "body"), addTasks); // Add tasks
 
 router
-  .route('/:id')
-  .all(shortTermTaskDeleteEditLimiter, longTermTaskDeleteEditLimiter, validate(mongoObjectId, 'params')) // applies to all methods on this route
-  .delete(deleteTask)     // Delete a single task
-  .patch(validate(taskSchema, 'body'), changeTask);      // Modify a task
+  .route("/:id")
+  .all(taskDeleteEditLimiter, validate(mongoObjectId, "params")) // applies to all methods on this route
+  .delete(deleteTask) // Delete a single task
+  .patch(validate(taskSchema, "body"), changeTask); // Modify a task
 
 export default router;
