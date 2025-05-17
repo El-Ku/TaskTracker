@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import Task from "../models/taskModel.js";
 
 export const getUserInfo = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -26,11 +27,16 @@ export const updateProfile = asyncHandler(async (req, res) => {
 });
 
 export const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndDelete(req.user._id);
-
+  const userId = req.user._id; // current user's id from auth middleware
+  const { acknowledged } = await Task.deleteMany({ userId });
+  const user = await User.findByIdAndDelete(userId);
   if (!user) {
     return res.status(404).json({ result: "error", message: "User not found" });
   }
-
-  res.json({ result: "success", message: "User account deleted successfully" });
+  if (acknowledged) {
+    res.json({
+      result: "success",
+      message: "User account deleted successfully",
+    });
+  }
 });

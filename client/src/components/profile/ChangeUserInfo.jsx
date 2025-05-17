@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import makeApiCall from "../../services/makeApiCall";
 import FormField from "../FormField";
+import isEqual from "lodash/isEqual";
 
 function ChangeUserInfo() {
   const [formInfo, setFormInfo] = useState({
@@ -9,7 +10,6 @@ function ChangeUserInfo() {
   });
   const [originalInfo, setOriginalInfo] = useState({});
   const [error, setError] = useState(null);
-  const [formChangedFlag, setFormChangedFlag] = useState(false);
 
   useEffect(() => {
     // Fetch user info initially
@@ -27,26 +27,17 @@ function ChangeUserInfo() {
   // and then go back to the original value
   const handleChange = (e) => {
     setFormInfo({ ...formInfo, [e.target.name]: e.target.value });
-    if (formInfo[e.target.name] !== originalInfo[e.target.name]) {
-      setFormChangedFlag(true);
-    }
   };
 
   const updateUserInfo = async () => {
-    //check if both formInfo and originalInfo are the same
-    if (!formChangedFlag) {
+    //send to server only if the user has changed atleat one field
+    if (isEqual(formInfo, originalInfo)) {
       return setError("No changes were made to user info");
     }
-    console.log(formInfo);
     try {
-      const data = await makeApiCall(
-        "/api/profile/user-info",
-        "PATCH",
-        formInfo
-      );
+      await makeApiCall("/api/profile/user-info", "PATCH", formInfo);
       alert("User info updated successfully");
       setError("");
-      setFormChangedFlag(false);
       setOriginalInfo(formInfo);
     } catch (err) {
       setError(err.message);

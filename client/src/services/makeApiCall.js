@@ -1,13 +1,19 @@
-const makeApiCall = async (url, method, body) => {
-  const token = localStorage.getItem("token");
+const makeApiCall = async (url, method, body, useToken = true) => {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (useToken) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
 
   try {
     const response = await fetch(url, {
       ...(method && { method }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
       ...(body && { body: JSON.stringify(body) }),
     });
     const data = await response.json();

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import FormField from "./FormField";
 import "../css/login.css";
+import makeApiCall from "../services/makeApiCall";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ mode }) => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -33,28 +37,24 @@ const Login = ({ mode }) => {
     try {
       const endpoint = mode === "login" ? "login" : "register";
 
-      const response = await fetch(`/api/auth/${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await response.json();
-
-      const { result, message, token } = data;
-      if (!response.ok) {
-        setError(`${result} : ${message}` || "Something went wrong");
-        return;
-      }
-      if (result == "success") {
-        localStorage.setItem("userName", form.username);
-        localStorage.setItem("token", token);
-        window.location.href = "/profile"; // redirect after success
+      const data = await makeApiCall(
+        `/api/auth/${endpoint}`,
+        "POST",
+        form,
+        false
+      );
+      if (data.result === "success") {
+        if (mode === "login") {
+          localStorage.setItem("userName", form.username);
+          localStorage.setItem("token", data.token);
+          navigate("/profile");
+        } else {
+          alert("Registration successful! Please login.");
+          window.location.href = "/";
+        }
       }
     } catch (err) {
-      setError(`Network error or server issue: ${err}`);
+      setError(err.message || "Something went wrong.");
     }
   };
 

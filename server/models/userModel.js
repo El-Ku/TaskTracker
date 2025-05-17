@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema(
     },
     settings: {
       fullName: { type: String, default: "" },
-      email: { type: String, unique: true, default: "" },
+      email: { type: String, default: "" },
     },
   },
   {

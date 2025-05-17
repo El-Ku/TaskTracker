@@ -9,7 +9,6 @@ import {
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
-  console.log("register user", req.body);
   // check if user already exists in the database
   const userExists = await User.findOne({ username });
   if (userExists) {
@@ -20,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10); //10 is salt
   const newUser = {
-    username: username,
+    username,
     password: hashedPassword,
   };
   const user = await User.create(newUser);
