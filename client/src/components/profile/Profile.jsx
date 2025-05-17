@@ -3,23 +3,12 @@ import "../../css/Profile.css";
 import ChangePassword from "./ChangePassword";
 import ChangeUserInfo from "./ChangeUserInfo";
 import DeleteAccount from "./DeleteAccount";
+import UpperNavBar from "./UpperNavBar";
 
 function Profile() {
   return (
     <div className="profile-container">
-      <div className="top-actions">
-        <button onClick={() => (window.location.href = "/tasks")}>
-          View My Tasks
-        </button>
-        <button
-          onClick={() => {
-            localStorage.removeItem("userName");
-            window.location.href = "/";
-          }}
-        >
-          Logout
-        </button>
-      </div>
+      <UpperNavBar />
 
       <h1 className="welcome-message">
         Welcome, {localStorage.getItem("userName") || user.fullName}!
