@@ -7,7 +7,7 @@ import {
   resetRegLimiter,
 } from "../middleware/rateLimitMiddleware";
 
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   // check if user already exists in the database
   const userExists = await User.findOne({ username });
@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
   if (!user) {
@@ -54,5 +54,3 @@ const loginUser = asyncHandler(async (req, res) => {
     token: generateToken(user._id),
   });
 });
-
-export { registerUser, loginUser };

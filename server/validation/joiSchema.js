@@ -22,9 +22,12 @@ const usernameSchema = Joi.string()
   .regex(/[a-zA-Z]/) // Ensure at least one letter (case insensitive)
   .required(); // Make it a required field
 
-export const userAuthInfo = Joi.object({
+export const userRegInfo = Joi.object({
   username: usernameSchema,
   password: passwordSchema,
+});
+
+export const userPassChgInfo = Joi.object({
   currentPassword: passwordSchema,
   newPassword: passwordSchema,
 });

@@ -25,12 +25,17 @@ function ChangePassword() {
     }
 
     try {
-      const data = await makeApiCall("/api/auth/update-password", "POST", form);
+      const data = await makeApiCall(
+        "/api/profile/update-password",
+        "POST",
+        form
+      );
       if (data.result === "success") {
         alert("Password updated successfully");
       }
     } catch (err) {
-      setError(err);
+      console.error(err);
+      setError(err.message);
     }
   };
 
@@ -65,7 +70,7 @@ function ChangePassword() {
 
         {error && <p className="error">{error}</p>}
 
-        <button className="update-btn" onClick={updatePassword}>
+        <button type="button" className="update-btn" onClick={updatePassword}>
           Update Password
         </button>
       </form>
