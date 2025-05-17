@@ -1,3 +1,41 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.task-container {
+  background-color: #fff;
+  border-radius: 8px;
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin: 2rem 10%;
+}
+
+.top-actions button {
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.top-actions button {
+  background-color: #1976d2;
+}
+
+.top-actions button:hover {
+  background-color: #125aa2;
+}
+
 .task-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -96,15 +134,15 @@
 
 /* Status row color highlights */
 .task-row.done {
-  background-color: #e6f4ea;
+  background-color: #a0eeb9;
 }
 
 .task-row.paused {
-  background-color: #fff6e5;
+  background-color: #fee464;
 }
 
 .task-row.pending {
-  background-color: #f0f4ff;
+  background-color: #f1f1f1;
 }
 
 input[type="text"] {

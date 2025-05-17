@@ -4,7 +4,7 @@ function UpperNavBar() {
   const navigate = useNavigate();
   return (
     <div className="top-actions">
-      <button onClick={() => navigate("/tasks")}>My Tasks</button>
+      <button onClick={() => navigate("/profile")}>My Profile</button>
       <button
         onClick={() => {
           localStorage.removeItem("userName");
