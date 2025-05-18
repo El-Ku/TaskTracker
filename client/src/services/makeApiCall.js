@@ -11,7 +11,7 @@ const makeApiCall = async (url, method, body, useToken = true) => {
   }
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}${url}`, {
       ...(method && { method }),
       headers,
       ...(body && { body: JSON.stringify(body) }),

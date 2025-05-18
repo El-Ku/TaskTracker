@@ -34,7 +34,7 @@ router
 router
   .route("/:id")
   .all(taskDeleteEditLimiter, validate(mongoObjectId, "params")) // applies to all methods on this route
-  .delete(deleteTask) // Delete a single task
-  .patch(validate(taskSchema, "body"), changeTask); // Modify a task
+  .delete(taskDeleteEditLimiter, deleteTask) // Delete a single task
+  .patch(taskDeleteEditLimiter, validate(taskSchema, "body"), changeTask); // Modify a task
 
 export default router;

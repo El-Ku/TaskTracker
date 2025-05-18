@@ -4,9 +4,12 @@ import taskRouter from "./routes/taskRouter.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import userAuthRouter from "./routes/userAuthRouter.js";
 import profileRouter from "./routes/profileRouter.js";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 connectDB();
 

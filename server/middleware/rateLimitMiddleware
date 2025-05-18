@@ -1,13 +1,10 @@
 import rateLimit from "express-rate-limit";
 
 const oneSec = 1000;
-const oneMin = 60 * oneSec;
-const oneHour = 60 * oneMin;
-const oneDay = 24 * oneHour;
 
-// Max 3 login attempts in 5 mins.
+// Max 3 login attempts in 10 secs.
 export const loginLimiter = rateLimit({
-  windowMs: 5 * oneMin, // 5 minutes
+  windowMs: 10 * oneSec,
   limit: 3,
   message: {
     result: "error",
@@ -23,10 +20,10 @@ export const resetLoginLimiter = (ip) => {
   loginLimiter.resetKey(ip);
 };
 
-// Max 1 task additions/deleteAll in 2 seconds
+// Max 10 task additions/deleteAll in 10 seconds
 export const taskAddDeleteAllLimiter = rateLimit({
-  windowMs: 2 * oneSec,
-  limit: 1,
+  windowMs: 10 * oneSec,
+  limit: 10,
   message: {
     result: "error",
     message: "You are adding or deleting tasks way too fast!",
@@ -35,9 +32,9 @@ export const taskAddDeleteAllLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Max 10 task delete/edit in 5 seconds
+// Max 10 task delete/edit in 10 seconds
 export const taskDeleteEditLimiter = rateLimit({
-  windowMs: 5 * oneSec,
+  windowMs: 10 * oneSec,
   limit: 10,
   message: {
     result: "error",
@@ -64,10 +61,10 @@ export const resetRegLimiter = (ip) => {
   userRegLimiter.resetKey(ip);
 };
 
-// Max 1 refresh per 3 secs.
+// Max 2 refresh per 1 secs.
 export const refreshLimiter = rateLimit({
-  windowMs: 3 * oneSec,
-  limit: 1,
+  windowMs: oneSec,
+  limit: 2,
   message: {
     result: "error",
     message: "You are trying to refresh the page way too many times",
@@ -76,10 +73,10 @@ export const refreshLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Max 3 profile update per 10 secs.
+// Max 5 profile update per 10 secs.
 export const profileUpdateLimiter = rateLimit({
   windowMs: 10 * oneSec,
-  limit: 3,
+  limit: 5,
   message: {
     result: "error",
     message: "You are trying to update the profile way too many times",

@@ -11,8 +11,8 @@ router.use(express.json());
 
 import { registerUser, loginUser } from "../controllers/userAuthController.js";
 
-router.route("/register").post(registerUser);
-//.post(userRegLimiter, validate(userAuthInfo, 'body'), registerUser);  //validate before registering the user
+router.route("/register").post(userRegLimiter, registerUser);
+//.post(userRegLimiter, validate(userRegInfo, 'body'), registerUser);  //validate before registering the user
 
 router.route("/login").post(loginLimiter, loginUser); //doesnt need validation here
 
