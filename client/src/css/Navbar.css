@@ -1,0 +1,55 @@
+/* Navbar.css */
+
+.navbar {
+  background-color: #1e293b; /* slate-800 */
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.navbar ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar li {
+  color: #f1f5f9; /* slate-100 */
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.navbar li::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #38bdf8; /* sky-400 */
+  transition: width 0.3s ease;
+}
+
+.navbar li:hover {
+  color: #38bdf8; /* sky-400 */
+}
+
+.navbar li:hover::after {
+  width: 100%;
+}
+
+/* Optional: Make it responsive */
+@media (max-width: 600px) {
+  .navbar ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

@@ -1,15 +1,21 @@
 import { Routes, Route } from "react-router-dom";
 import LoginTabs from "./pages/LoginTabs";
-import ProfilePage from "./pages/ProfilePage";
-import Tasks from "./components/tasks/Tasks";
+import Profile from "./pages/Profile";
+import Tasks from "./pages/Tasks";
+import Navbar from "./components/Navbar";
+import ProtectedLayout from "./components/ProtectedLayout";
 
 function App() {
   return (
     <main className="main-content">
+      <Navbar />
       <Routes>
         <Route path="/" element={<LoginTabs />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/tasks" element={<Tasks />} />
+        <Route element={<ProtectedLayout />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/logout" element={<LoginTabs />} />
+        </Route>
       </Routes>
     </main>
   );

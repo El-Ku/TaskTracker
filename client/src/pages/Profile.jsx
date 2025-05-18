@@ -1,15 +1,11 @@
-import { useState } from "react";
-import "../../css/Profile.css";
-import ChangePassword from "./ChangePassword";
-import ChangeUserInfo from "./ChangeUserInfo";
-import DeleteAccount from "./DeleteAccount";
-import UpperNavBar from "./UpperNavBar";
+import ChangePassword from "../components/profile/ChangePassword";
+import ChangeUserInfo from "../components/profile/ChangeUserInfo";
+import DeleteAccount from "../components/profile/DeleteAccount";
+import "../css/Profile.css";
 
 function Profile() {
   return (
     <div className="profile-container">
-      <UpperNavBar />
-
       <h1 className="welcome-message">
         Welcome, {localStorage.getItem("userName") || user.fullName}!
       </h1>
