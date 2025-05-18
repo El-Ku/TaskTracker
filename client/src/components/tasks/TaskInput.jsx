@@ -5,20 +5,26 @@ import { useTasks } from "../../contexts/TasksContext";
 function TaskInput() {
   const { tasks, setTasks } = useTasks();
   const [taskInput, setTaskInput] = useState("");
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setTaskInput(e.target.value);
   };
 
   const addTasksToDatabase = async () => {
-    const newTasks = await addTasks(taskInput);
-    setTasks([...tasks, ...newTasks]);
-    setTaskInput(""); // clear input
+    try {
+      const newTasks = await addTasks(taskInput);
+      setTasks([...tasks, ...newTasks]);
+      setTaskInput(""); // clear input
+      setError(null); // clear error
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
-    <div className="task-container">
-      <div className="task-input-section">
+    <div className="task-input-section">
+      <div className="input-row">
         <input
           type="text"
           id="taskInput"
@@ -38,6 +44,7 @@ function TaskInput() {
           Add
         </button>
       </div>
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }

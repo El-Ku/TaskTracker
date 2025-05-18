@@ -1,6 +1,7 @@
 import TaskInput from "./TaskInput";
 import TaskTable from "./TaskTable";
 import UpperNavBar from "./UpperNavBar.jsx";
+import ClearAllButton from "./ClearAllButton.jsx";
 import { TasksProvider } from "../../contexts/TasksContext.jsx";
 import "../../css/Tasks.css";
 
@@ -11,6 +12,7 @@ function Tasks() {
         <UpperNavBar />
         <TaskInput />
         <TaskTable />
+        <ClearAllButton />
       </TasksProvider>
     </div>
   );

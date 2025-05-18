@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTasks } from "../../contexts/TasksContext";
 import { updateFieldCallApi } from "../../services/taskApiCalls";
 
@@ -10,8 +9,33 @@ import { updateFieldCallApi } from "../../services/taskApiCalls";
    */
 }
 function EditField({ task, propertyToUpdate }) {
-  const { setTasks, editTaskId, setEditTaskId, editValue, setEditValue } =
-    useTasks();
+  const {
+    setTasks,
+    editTaskId,
+    setEditTaskId,
+    editValue,
+    setEditValue,
+    setError,
+  } = useTasks();
+
+  const handleAction = async () => {
+    try {
+      const data = await updateFieldCallApi(task._id, {
+        [propertyToUpdate]: editValue,
+      });
+      if (data.result === "success") {
+        setTasks((prev) =>
+          prev.map((t) =>
+            t._id === task._id ? { ...t, [propertyToUpdate]: editValue } : t
+          )
+        );
+        setEditTaskId(null); // exit edit mode
+      }
+      setError(null); // clear error
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <td>
@@ -26,24 +50,10 @@ function EditField({ task, propertyToUpdate }) {
                 alert("Task description cannot be empty");
                 return;
               }
-
-              const data = await updateFieldCallApi(task._id, {
-                [propertyToUpdate]: editValue,
-              });
-              if (data.result === "success") {
-                setTasks((prev) =>
-                  prev.map((t) =>
-                    t._id === task._id
-                      ? { ...t, [propertyToUpdate]: editValue }
-                      : t
-                  )
-                );
-                setEditTaskId(null); // exit edit mode
+              await handleAction();
+              if (e.key === "Escape") {
+                setEditTaskId(null);
               }
-              return;
-            }
-            if (e.key === "Escape") {
-              setEditTaskId(null);
             }
           }}
           autoFocus

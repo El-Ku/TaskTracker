@@ -5,7 +5,6 @@ function DeleteAccount() {
   const [error, setError] = useState(null);
   const deleteAccount = async () => {
     try {
-      console.log("Deleting account...");
       await makeApiCall("/api/profile/user-info", "DELETE", null);
       localStorage.removeItem("userName");
       localStorage.removeItem("token");

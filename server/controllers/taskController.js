@@ -6,7 +6,7 @@ export const loadAll = asyncHandler(async (req, res) => {
   const userId = req.user._id; // current user's id from middleware
   const tasks = await Task.find({ userId });
   if (tasks.length === 0) {
-    res.status(404).json({ result: "error", message: "Task not found" });
+    res.json({ result: "error", message: "Tasks not found" });
   } else {
     res.json({ payload: tasks });
   }
@@ -29,7 +29,7 @@ export const addTasks = asyncHandler(async (req, res) => {
   const newTasks = tasksReceived.map((task) => ({
     //from client
     desc: task.desc,
-    userId: userId,
+    userId,
   }));
   const tasks = await Task.find({ userId }); // find all current tasks of an user
   const taskDescs = tasks.map((task) => task.desc); //get current task desc from database
@@ -39,13 +39,11 @@ export const addTasks = asyncHandler(async (req, res) => {
   );
   const uniqueTasks = await Task.insertMany(newFilteredTasks); // save to database after removing duplicates
   if (uniqueTasks.length === 0) {
-    res
-      .status(404)
-      .json({
-        result: "error",
-        message: "No unique tasks to save to the database",
-        payload: uniqueTasks,
-      });
+    res.status(404).json({
+      result: "error",
+      message: "No unique tasks to save to the database",
+      payload: uniqueTasks,
+    });
   } else {
     res.json({
       result: "success",
@@ -66,20 +64,16 @@ export const deleteAll = asyncHandler(async (req, res) => {
         message: `All ${deletedCount} tasks were deleted from the database`,
       });
     } else {
-      res
-        .status(404)
-        .json({
-          result: "error",
-          message: `There were no tasks in the database to delete`,
-        });
+      res.status(404).json({
+        result: "error",
+        message: `There were no tasks in the database to delete`,
+      });
     }
   } else {
-    res
-      .status(500)
-      .json({
-        result: "error",
-        message: `Couldnt delete any tasks from the database`,
-      });
+    res.status(500).json({
+      result: "error",
+      message: `Couldnt delete any tasks from the database`,
+    });
   }
 });
 
@@ -90,13 +84,10 @@ export const deleteTask = asyncHandler(async (req, res) => {
     userId: req.user._id,
   });
   if (task === null) {
-    res
-      .status(404)
-      .json({
-        result: "error",
-        message:
-          "Task was not deleted because it was not found on our database",
-      });
+    res.status(404).json({
+      result: "error",
+      message: "Task was not deleted because it was not found on our database",
+    });
   } else {
     res.json({
       result: "success",
@@ -113,12 +104,10 @@ export const changeTask = asyncHandler(async (req, res) => {
     { new: true, runValidators: true } // return the updated document
   );
   if (task === null) {
-    res
-      .status(404)
-      .json({
-        result: "error",
-        message: "Task ID not found on our server. Unable to update the task",
-      });
+    res.status(404).json({
+      result: "error",
+      message: "Task ID not found on our server. Unable to update the task",
+    });
   } else {
     res.json({ result: "success", message: "Task was updated successfully" });
   }

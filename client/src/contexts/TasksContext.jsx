@@ -6,6 +6,7 @@ export const TasksProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [error, setError] = useState(null);
 
   return (
     <TasksContext.Provider
@@ -16,6 +17,8 @@ export const TasksProvider = ({ children }) => {
         setEditTaskId,
         editValue,
         setEditValue,
+        error,
+        setError,
       }}
     >
       {children}

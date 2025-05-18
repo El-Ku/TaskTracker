@@ -5,15 +5,18 @@ import ActionButtons from "./ActionButtons";
 import EditField from "./EditField";
 
 function TaskTable() {
-  const { tasks, setTasks } = useTasks();
+  const { tasks, setTasks, error, setError } = useTasks();
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const data = await getTasks();
-        setTasks(data);
+        if (data) {
+          setTasks(data);
+        }
+        setError(null); // clear error
       } catch (err) {
-        console.error("Failed to fetch tasks:", err);
+        setError(err.message);
       }
     };
 
@@ -21,25 +24,28 @@ function TaskTable() {
   }, []);
 
   return (
-    <table className="task-table">
-      <thead>
-        <tr>
-          <th className="task-desc">Description</th>
-          <th>Created @</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {tasks.map((task) => (
-          <tr key={task._id} className={`task-row ${task.status}`}>
-            {/* Add task description with editable functionality and task created time */}
-            <EditField task={task} propertyToUpdate="desc" />
-            <td>{formatDate(task.time)}</td>
-            <ActionButtons task={task} />
+    <div className="task-table-container">
+      <table className="task-table">
+        <thead>
+          <tr>
+            <th className="task-desc">Description</th>
+            <th>Created @</th>
+            <th>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {tasks.map((task) => (
+            <tr key={task._id} className={`task-row ${task.status}`}>
+              {/* Add task description with editable functionality and task created time */}
+              <EditField task={task} propertyToUpdate="desc" />
+              <td>{formatDate(task.time)}</td>
+              <ActionButtons task={task} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {error && <p className="error">{error}</p>}
+    </div>
   );
 }
 
