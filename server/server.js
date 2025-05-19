@@ -7,7 +7,7 @@ import profileRouter from "./routes/profileRouter.js";
 import cors from "cors";
 
 const app = express();
-const port = 3000;
+const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
 app.use(cors());
 
@@ -21,7 +21,7 @@ app.listen(port, () => {
 
 // Redirect root URL to login.html
 app.get("/", (req, res) => {
-  res.redirect("/login.html");
+  res.redirect("/welcome.html");
 });
 
 app.use("/api/auth", userAuthRouter);
