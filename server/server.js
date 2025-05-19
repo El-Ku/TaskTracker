@@ -9,7 +9,12 @@ import cors from "cors";
 const app = express();
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://tasktracker-client-yuyo.onrender.com",
+    credentials: true,
+  })
+);
 
 connectDB();
 
