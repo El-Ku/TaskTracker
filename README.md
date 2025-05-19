@@ -15,8 +15,8 @@ app.use(
 
 The client(as a static site) and server(as a web service) are deployed on Render.
 
-    - Server is running at https://tasktracker-ufr9.onrender.com
-    - Client is running at https://tasktracker-client-yuyo.onrender.com
+- Server is running at [https://tasktracker-ufr9.onrender.com](https://tasktracker-ufr9.onrender.com)
+- Client is running at [https://tasktracker-client-yuyo.onrender.com](https://tasktracker-client-yuyo.onrender.com)
 
 ### Render settings for the server:
 
