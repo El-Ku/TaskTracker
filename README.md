@@ -58,3 +58,15 @@ This is a simple task tracker application built with MERN stack(MongoDB, Express
 - Authentication is done using `JWT`(JSON Web Tokens).
 - On the backend, basic validation is done using `Joi`.
 - `express-rate-limit` is used to limit the number of requests to the server.
+
+## What is next?
+
+- Replace the custom form handling with `react-hook-form` and `zod` for validation for login form.
+- Replace the custom form handling with `react-hook-form` and `zod` for validation for profile forms.
+- Replace the custom form handling with `react-hook-form` and `zod` for validation for adding tasks.
+- Add due dates to tasks. Due dates should be editable and optional.
+- Show tasks based on the due date. (closer due dates at the top)
+- Show completed tasks at the bottom of the list, paused tasks in the middle pending tasks at the top.
+- Add a 'completed' timestamp to tasks. When status is changed, remove this timestamp.
+- Put the edit task button in the task description field itself. Change symbol to a pencil icon.
+- Add an admin user to manage all users and tasks.

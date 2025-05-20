@@ -1,2 +1,0 @@
-- Add a README file
-- Refactor the code. including server side.
