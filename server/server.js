@@ -9,9 +9,14 @@ import cors from "cors";
 const app = express();
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
+const allowedOrigin =
+  process.env.NODE_ENV === "production"
+    ? "https://tasktracker-client-yuyo.onrender.com"
+    : "http://localhost:5173";
+
 app.use(
   cors({
-    origin: "https://tasktracker-client-yuyo.onrender.com",
+    origin: allowedOrigin,
     credentials: true,
   })
 );

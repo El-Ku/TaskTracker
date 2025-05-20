@@ -1,19 +1,18 @@
 ## Things to Check before deploying on Render:
 
-- Use the following cors settings on server.js file:
+- Change the NODE_ENV variable in the server directory to `production` in the `.env` file.
+- In the server directory, change the `allowedOrigin` variable in the `server.js` file to the URL of your client application. For example, if your client is deployed at `https://my-client-site.onrender.com`, then change it to:
 
 ```js
-app.use(
-  cors({
-    origin: "https://tasktracker-client-yuyo.onrender.com",
-    credentials: true,
-  })
-);
+const allowedOrigin =
+  process.env.NODE_ENV === "production"
+    ? "https://my-client-site.onrender.com"
+    : "http://localhost:5173";
 ```
 
 ## Live deployment
 
-The client(as a static site) and server(as a web service) are deployed on Render.
+The client(as a static site) and server(as a web service) are deployed on Render. Note that after 15 minutes of inactivity(as I am using a free account in Render), the server will go to sleep and it will take upto 30 seconds to wake up. The client is a static site and will not go to sleep.
 
 - Server is running at [https://tasktracker-ufr9.onrender.com](https://tasktracker-ufr9.onrender.com)
 - Client is running at [https://tasktracker-client-yuyo.onrender.com](https://tasktracker-client-yuyo.onrender.com)

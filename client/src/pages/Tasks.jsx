@@ -8,6 +8,7 @@ function Tasks() {
   return (
     <div className="tasks-container">
       <TasksProvider>
+        <h1>Task Manager</h1>
         <TaskInput />
         <TaskTable />
         <ClearAllButton />
