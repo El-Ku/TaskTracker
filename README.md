@@ -61,9 +61,6 @@ This is a simple task tracker application built with MERN stack(MongoDB, Express
 
 ## What is next?
 
-- Replace the custom form handling with `react-hook-form` and `zod` for validation for login form.
-- Replace the custom form handling with `react-hook-form` and `zod` for validation for profile forms.
-- Replace the custom form handling with `react-hook-form` and `zod` for validation for adding tasks.
 - Add due dates to tasks. Due dates should be editable and optional.
 - Show tasks based on the due date. (closer due dates at the top)
 - Show completed tasks at the bottom of the list, paused tasks in the middle pending tasks at the top.

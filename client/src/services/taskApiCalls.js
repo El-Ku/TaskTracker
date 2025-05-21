@@ -1,4 +1,5 @@
 import makeApiCall from "./makeApiCall";
+import { z } from "zod";
 
 export const getTasks = async () => {
   try {
@@ -14,6 +15,14 @@ export const getTasks = async () => {
 };
 
 export const addTasks = async (taskInput) => {
+  // Schema for a single task
+  const taskSchema = z.object({
+    desc: z
+      .string()
+      .min(3, "Task description should contain at least 3 characters")
+      .max(500, "Task description should not exceed 500 characters"),
+  });
+  const tasksArraySchema = z.array(taskSchema);
   try {
     const trimmed = taskInput.trim();
     if (!trimmed) return;
@@ -21,6 +30,7 @@ export const addTasks = async (taskInput) => {
     const newTasks = trimmed.split(",").map((t) => ({
       desc: t.trim(),
     }));
+    tasksArraySchema.parse(newTasks);
     const data = await makeApiCall("/api/tasks/", "POST", newTasks);
     return data.payload;
   } catch (err) {
