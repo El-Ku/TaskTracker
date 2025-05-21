@@ -60,13 +60,9 @@
 /* Form group layout */
 .form-group {
   margin-bottom: 1.2rem;
-}
-
-.form-group label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .form-group input {

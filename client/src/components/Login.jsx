@@ -1,39 +1,44 @@
-import { useState } from "react";
-import FormField from "./FormField";
-import "../css/login.css";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../services/makeApiCall";
 import { useNavigate } from "react-router-dom";
 
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters long")
+  .max(32, "Password must be at most 32 characters long")
+  .regex(/[A-Z]/, "Must include at least one uppercase letter")
+  .regex(/[a-z]/, "Must include at least one lowercase letter")
+  .regex(/[0-9]/, "Must include at least one number");
+
+const schema = z
+  .object({
+    username: z.string().min(3, "User name must be at least 3 characters"),
+    password: passwordSchema,
+  })
+  .refine(
+    (data) =>
+      data.confirmPassword ? data.password === data.confirmPassword : true,
+    {
+      message: "Passwords do not match", // highlight the confirmPassword field
+      path: ["confirmPassword"],
+    }
+  );
+
 const Login = ({ mode }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (
-      !form.username ||
-      !form.password ||
-      (mode === "register" && !form.confirmPassword)
-    ) {
-      return setError("Please fill in all fields.");
-    }
-
-    if (mode === "register" && form.password !== form.confirmPassword) {
-      return setError("Passwords do not match.");
-    }
-
+  const onSubmit = async (form) => {
     try {
       const endpoint = mode === "login" ? "login" : "register";
 
@@ -54,7 +59,7 @@ const Login = ({ mode }) => {
         }
       }
     } catch (err) {
-      setError(err.message || "Something went wrong.");
+      setError("root", { message: err.message || "Something went wrong." });
     }
   };
 
@@ -66,35 +71,29 @@ const Login = ({ mode }) => {
           : "Please enter your details to register."}
       </p>
 
-      <form onSubmit={handleSubmit}>
-        <FormField
-          type="text"
-          name="username"
-          value={form.username}
-          handleChange={handleChange}
-          required={true}
-          label="Username"
-        />
-        <FormField
+      <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
+        <input type="text" placeholder="Username" {...register("username")} />
+        {errors.username && <p className="error">{errors.username.message}</p>}
+        <input
           type="password"
-          name="password"
-          value={form.password}
-          handleChange={handleChange}
-          required={true}
-          label="Password"
+          placeholder="Password"
+          {...register("password")}
         />
+        {errors.password && <p className="error">{errors.password.message}</p>}
         {mode === "register" && (
-          <FormField
+          <input
             type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            handleChange={handleChange}
-            required={true}
-            label="Confirm Password"
+            placeholder="Confirm Password"
+            {...register("confirmPassword")}
           />
         )}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">{mode === "login" ? "Login" : "Register"}</button>
+        {errors.confirmPassword && (
+          <p className="error">{errors.confirmPassword.message}</p>
+        )}
+        {errors.root && <p className="error">{errors.root.message}</p>}
+        <button disabled={isSubmitting} type="submit">
+          {mode === "login" ? "Login" : "Register"}
+        </button>
       </form>
     </div>
   );

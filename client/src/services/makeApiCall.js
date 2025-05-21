@@ -32,16 +32,14 @@ const makeApiCall = async (
     const response = await axios(config);
     return response.data; // already parsed JSON
   } catch (err) {
-    // Axios wraps errors with `response`, `request`, or `message`
+    console.error("API call error from makeApiCall:", err);
     if (err.response) {
       const { result, message } = err.response.data || {};
       throw new Error(
-        `${result || err.response.status} : ${
-          message || "Something went wrong"
-        }`
+        `Status ${err.response.status} : ${message || "Something went wrong"}`
       );
     } else if (err.request) {
-      throw new Error("No response received from server");
+      throw new Error(err.request.response || "No response from server");
     } else {
       throw new Error(err.message);
     }
