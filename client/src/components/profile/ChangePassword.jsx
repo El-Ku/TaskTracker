@@ -1,76 +1,86 @@
-import { useState } from "react";
-import FormField from "../FormField";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
 
-function ChangePassword() {
-  const [form, setForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters long")
+  .max(32, "Password must be at most 32 characters long")
+  .regex(/[A-Z]/, "Must include at least one uppercase letter")
+  .regex(/[a-z]/, "Must include at least one lowercase letter")
+  .regex(/[0-9]/, "Must include at least one number");
+
+const schema = z
+  .object({
+    currentPassword: passwordSchema,
+    newPassword: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match", // highlight the confirmPassword field
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: "New password must be different from current password",
+    path: ["newPassword"],
   });
-  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+function ChangePassword() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
 
-  const updatePassword = async () => {
-    setError(null);
-    if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
-      return setError("Please fill in all fields.");
-    }
-
-    if (form.newPassword !== form.confirmPassword) {
-      return setError("New passwords do not match.");
-    }
-
+  const onSubmit = async (passwordForm) => {
     try {
       const data = await makeApiCall(
-        "/api/profile/update-password",
+        `/api/profile/update-password`,
         "POST",
-        form
+        passwordForm
       );
       if (data.result === "success") {
         alert("Password updated successfully");
       }
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      setError("root", { message: err.message || "Something went wrong." });
     }
   };
 
   return (
     <div className="compact-form">
       <h3>Change Password</h3>
-      <form className="password-form">
-        <FormField
+      <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
+        <input
           type="password"
-          name="currentPassword"
-          value={form.currentPassword}
-          handleChange={handleChange}
-          placeholder="Enter your current password"
-          required={true}
+          placeholder="Current password"
+          {...register("currentPassword")}
         />
-        <FormField
+        {errors.currentPassword && (
+          <p className="error">{errors.currentPassword.message}</p>
+        )}
+        <input
           type="password"
-          name="newPassword"
-          value={form.newPassword}
-          handleChange={handleChange}
-          placeholder="Enter your new password"
-          required={true}
+          placeholder="New password"
+          {...register("newPassword")}
         />
-        <FormField
+        {errors.newPassword && (
+          <p className="error">{errors.newPassword.message}</p>
+        )}
+        <input
           type="password"
-          name="confirmPassword"
-          value={form.confirmPassword}
-          handleChange={handleChange}
-          placeholder="Confirm your new password"
-          required={true}
+          placeholder="Confirm password"
+          {...register("confirmPassword")}
         />
-
-        {error && <p className="error">{error}</p>}
-
-        <button type="button" className="update-btn" onClick={updatePassword}>
+        {errors.confirmPassword && (
+          <p className="error">{errors.confirmPassword.message}</p>
+        )}
+        {errors.root && <p className="error">{errors.root.message}</p>}
+        <button disabled={isSubmitting} type="submit">
           Update Password
         </button>
       </form>

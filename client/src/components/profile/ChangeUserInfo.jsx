@@ -1,72 +1,76 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
 import FormField from "../FormField";
 import isEqual from "lodash/isEqual";
 
+const schema = z.object({
+  fullName: z.string().min(3, "Full name must be at least 3 characters"),
+  email: z.string().email("Invalid email address"),
+});
+
 function ChangeUserInfo() {
-  const [formInfo, setFormInfo] = useState({
-    fullName: "",
-    email: "",
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm({
+    resolver: zodResolver(schema),
   });
-  const [originalInfo, setOriginalInfo] = useState({});
-  const [error, setError] = useState(null);
+
+  const [originalInfo, setOriginalInfo] = useState(null);
 
   useEffect(() => {
     // Fetch user info initially
     const fetchUser = async () => {
-      const data = await makeApiCall("/api/profile/user-info", null, null);
-      const userInfo = data.payload;
-      setOriginalInfo(userInfo);
-      setFormInfo(userInfo);
+      try {
+        const data = await makeApiCall("/api/profile/user-info", null, null);
+        const userInfo = data.payload;
+        setOriginalInfo(userInfo);
+        Object.entries(userInfo).forEach(([key, value]) => {
+          setValue(key, value);
+        });
+      } catch (err) {
+        setError("root", { message: "Failed to load user info." });
+      }
     };
     fetchUser();
   }, []);
 
-  //once its set true, it will not be set to false again
-  //this results in a false flag when the user tries to update one field
-  // and then go back to the original value
-  const handleChange = (e) => {
-    setFormInfo({ ...formInfo, [e.target.name]: e.target.value });
-  };
-
-  const updateUserInfo = async () => {
-    //send to server only if the user has changed atleat one field
-    if (isEqual(formInfo, originalInfo)) {
-      return setError("No changes were made to user info");
+  const onSubmit = async (profileInfo) => {
+    if (isEqual(profileInfo, originalInfo)) {
+      setError("root", {
+        message: "No changes detected.",
+      });
+      return;
     }
     try {
-      await makeApiCall("/api/profile/user-info", "PATCH", formInfo);
+      await makeApiCall("/api/profile/user-info", "PATCH", profileInfo);
       alert("User info updated successfully");
       setError("");
-      setOriginalInfo(formInfo);
+      setOriginalInfo(profileInfo); // Update reference
     } catch (err) {
-      setError(err.message);
+      setError("root", { message: err.message || "Something went wrong." });
     }
   };
   return (
     <div>
       <h2>User Settings</h2>
 
-      <FormField
-        type="text"
-        name="fullName"
-        value={formInfo.fullName}
-        handleChange={handleChange}
-        required={true}
-        label="Full Name"
-      />
-      <FormField
-        type="email"
-        name="email"
-        value={formInfo.email}
-        handleChange={handleChange}
-        required={true}
-        label="Email"
-      />
-      <button className="update-btn" type="button" onClick={updateUserInfo}>
-        Update Info
-      </button>
-      {error && <p className="error">{error}</p>}
+      <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
+        <input type="text" placeholder="Full name" {...register("fullName")} />
+        {errors.fullName && <p className="error">{errors.fullName.message}</p>}
+        <input type="text" placeholder="Email" {...register("email")} />
+        {errors.email && <p className="error">{errors.email.message}</p>}
+        {errors.root && <p className="error">{errors.root.message}</p>}
+        <button disabled={isSubmitting} className="update-btn" type="submit">
+          Update Info
+        </button>
+      </form>
     </div>
   );
 }

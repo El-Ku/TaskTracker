@@ -34,7 +34,7 @@ const makeApiCall = async (
   } catch (err) {
     console.error("API call error from makeApiCall:", err);
     if (err.response) {
-      const { result, message } = err.response.data || {};
+      const { message } = err.response.data || {};
       throw new Error(
         `Status ${err.response.status} : ${message || "Something went wrong"}`
       );
