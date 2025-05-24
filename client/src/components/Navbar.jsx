@@ -21,8 +21,11 @@ function Navbar() {
 
   return (
     <nav className="navbar">
+      <p className="welcome-user-text">
+        Welcome {localStorage.getItem("userName")}
+      </p>
       <ul>
-        <li onClick={() => navigate("/")}>Home</li>
+        {!isLoggedIn && <li onClick={() => navigate("/")}>Home</li>}
         {isLoggedIn && <li onClick={() => navigate("/profile")}>Profile</li>}
         {isLoggedIn && <li onClick={() => navigate("/tasks")}>Tasks</li>}
         {isLoggedIn && <li onClick={handleLogout}>Logout</li>}

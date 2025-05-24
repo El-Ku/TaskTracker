@@ -4,9 +4,12 @@ const TasksContext = createContext();
 
 export const TasksProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
+  const [originalTasks, setOriginalTasks] = useState([]);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [error, setError] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedSelectAll, setSelectedSelectAll] = useState(false);
 
   return (
     <TasksContext.Provider
@@ -19,6 +22,12 @@ export const TasksProvider = ({ children }) => {
         setEditValue,
         error,
         setError,
+        originalTasks,
+        setOriginalTasks,
+        selectedRows,
+        setSelectedRows,
+        selectedSelectAll,
+        setSelectedSelectAll,
       }}
     >
       {children}

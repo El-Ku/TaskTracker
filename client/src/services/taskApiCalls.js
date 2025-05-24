@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const getTasks = async () => {
   try {
-    const data = await makeApiCall("/api/tasks/allTasks", null, null);
+    const data = await makeApiCall("/api/tasks/", null, null);
     if (data.result === "error") {
       return;
     } else {
@@ -38,25 +38,17 @@ export const addTasks = async (taskInput) => {
   }
 };
 
-export const deleteTasks = async (id) => {
+export const deleteTasks = async (taskIds) => {
   try {
-    return await makeApiCall(`/api/tasks/${id}`, "DELETE", null);
+    return await makeApiCall(`/api/tasks/`, "DELETE", taskIds);
   } catch (err) {
     throw err;
   }
 };
 
-export const updateTaskStatus = async (id, status) => {
+export const updateTasks = async (modifiedTasks) => {
   try {
-    return await makeApiCall(`/api/tasks/${id}`, "PATCH", { status });
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const updateFieldCallApi = async (id, fieldToUpdate) => {
-  try {
-    return await makeApiCall(`/api/tasks/${id}`, "PATCH", fieldToUpdate);
+    return await makeApiCall("/api/tasks/", "PATCH", modifiedTasks);
   } catch (err) {
     throw err;
   }
@@ -64,7 +56,7 @@ export const updateFieldCallApi = async (id, fieldToUpdate) => {
 
 export const clearAllTasks = async () => {
   try {
-    return await makeApiCall("/api/tasks/allTasks", "DELETE", null);
+    return await makeApiCall("/api/tasks/", "DELETE");
   } catch (err) {
     throw err;
   }

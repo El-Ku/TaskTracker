@@ -2,7 +2,7 @@ import { clearAllTasks } from "../../services/taskApiCalls";
 import { useTasks } from "../../contexts/TasksContext";
 
 function ClearAllButton() {
-  const { setTasks, setError } = useTasks();
+  const { setTasks, setError, setOriginalTasks } = useTasks();
 
   return (
     <button
@@ -12,6 +12,7 @@ function ClearAllButton() {
           await clearAllTasks();
           setError(null); // clear error
           setTasks([]);
+          setOriginalTasks([]);
         } catch (err) {
           setError(err.message);
         }

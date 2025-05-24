@@ -3,9 +3,7 @@ import joiDate from "@joi/date";
 const Joi = coreJoi.extend(joiDate);
 import { TaskStatus } from "../../CONSTANTS.js";
 
-export const mongoObjectId = Joi.object({
-  id: Joi.string().pattern(/^[0-9a-fA-F]{24}$/),
-});
+export const mongoObjectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
 const passwordSchema = Joi.string()
   .min(8)
@@ -58,6 +56,7 @@ const taskDescSchema = Joi.string()
 const taskStatusSchema = Joi.string().valid(...Object.values(TaskStatus));
 
 export const taskSchema = Joi.object({
+  _id: mongoObjectId,
   desc: taskDescSchema,
   status: taskStatusSchema,
 });

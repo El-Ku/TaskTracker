@@ -3,8 +3,7 @@ import protect from "../middleware/protectMiddleware.js";
 import { mongoObjectId, taskSchema } from "../validation/joiSchema.js";
 import validate from "../middleware/validateMiddleware.js";
 import {
-  taskAddDeleteAllLimiter,
-  taskDeleteEditLimiter,
+  taskRateLimiter,
   refreshLimiter,
 } from "../middleware/rateLimitMiddleware";
 
@@ -14,27 +13,18 @@ router.use(express.json());
 import {
   loadAll,
   addTasks,
-  deleteTask,
-  deleteAll,
-  changeTask,
+  deleteTasks,
+  updateTasks,
 } from "../controllers/taskController.js";
 
 // Apply `protect` to _all_ subsequent routes
 router.use(protect);
 
 router
-  .route("/allTasks")
-  .get(refreshLimiter, loadAll) // load all tasks
-  .delete(taskAddDeleteAllLimiter, deleteAll); // delete all tasks
-
-router
   .route("/")
-  .post(taskAddDeleteAllLimiter, validate(taskSchema, "body"), addTasks); // Add tasks
-
-router
-  .route("/:id")
-  .all(taskDeleteEditLimiter, validate(mongoObjectId, "params")) // applies to all methods on this route
-  .delete(taskDeleteEditLimiter, deleteTask) // Delete a single task
-  .patch(taskDeleteEditLimiter, validate(taskSchema, "body"), changeTask); // Modify a task
+  .get(refreshLimiter, loadAll) // load all tasks
+  .post(taskRateLimiter, validate(taskSchema, "body"), addTasks) // Add tasks
+  .patch(taskRateLimiter, validate(taskSchema, "body"), updateTasks) // update task status
+  .delete(taskRateLimiter, deleteTasks); // delete multiple or all tasks
 
 export default router;

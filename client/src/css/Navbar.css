@@ -1,55 +1,57 @@
-/* Navbar.css */
-
 .navbar {
-  background-color: #1e293b; /* slate-800 */
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1rem 2rem;
+  background: rgb(0, 0, 255);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+.welcome-user-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 0.5rem;
 }
 
 .navbar ul {
+  list-style: none;
   display: flex;
   gap: 1.5rem;
-  list-style: none;
   margin: 0;
   padding: 0;
-  align-items: center;
 }
 
 .navbar li {
-  color: #f1f5f9; /* slate-100 */
   cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 500;
-  position: relative;
-  transition: color 0.2s ease;
-}
-
-.navbar li::after {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 2px;
-  bottom: -4px;
-  left: 0;
-  background-color: #38bdf8; /* sky-400 */
-  transition: width 0.3s ease;
+  font-size: 1.3rem;
+  color: white;
+  transition: opacity 0.3s ease;
 }
 
 .navbar li:hover {
-  color: #38bdf8; /* sky-400 */
+  opacity: 0.8;
 }
 
-.navbar li:hover::after {
-  width: 100%;
-}
+/* Responsive: stack text and menu on small screens */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-/* Optional: Make it responsive */
-@media (max-width: 600px) {
   .navbar ul {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .navbar li {
+    padding: 0.5rem 0;
   }
 }

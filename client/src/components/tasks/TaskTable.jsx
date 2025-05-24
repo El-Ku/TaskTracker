@@ -2,10 +2,12 @@ import { useEffect } from "react";
 import { getTasks } from "../../services/taskApiCalls";
 import { useTasks } from "../../contexts/TasksContext";
 import ActionButtons from "./ActionButtons";
-import EditField from "./EditField";
+import SyncToDBButton from "./SyncToDBButton";
+import { tableSettings } from "./tableSettings";
+import { flexRender } from "@tanstack/react-table";
 
 function TaskTable() {
-  const { tasks, setTasks, error, setError } = useTasks();
+  const { setTasks, error, setError, setOriginalTasks } = useTasks();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -13,8 +15,9 @@ function TaskTable() {
         const data = await getTasks();
         if (data) {
           setTasks(data);
+          setOriginalTasks(data);
         }
-        setError(null); // clear error
+        setError(null);
       } catch (err) {
         setError(err.message);
       }
@@ -23,44 +26,64 @@ function TaskTable() {
     fetchTasks();
   }, []);
 
+  const table = tableSettings();
+
   return (
-    <div className="task-table-container">
-      <table className="task-table">
-        <thead>
-          <tr>
-            <th className="task-desc">Description</th>
-            <th>Created @</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task._id} className={`task-row ${task.status}`}>
-              {/* Add task description with editable functionality and task created time */}
-              <EditField task={task} propertyToUpdate="desc" />
-              <td>{formatDate(task.time)}</td>
-              <ActionButtons task={task} />
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <ActionButtons />
+      <div className="whole-table">
+        <table className="task-table">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {/* Sorting indicators */}
+                    {header.id !== "select" &&
+                      ({
+                        asc: " 🔼",
+                        desc: " 🔽",
+                      }[header.column.getIsSorted()] ??
+                        null)}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className={`status-${row.original.status}`}>
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    onChange={() => {
+                      if (row.id === "select") {
+                        cell.handleCheckboxChange(row.id);
+                      } else {
+                        null;
+                      }
+                    }}
+                    style={{ padding: "10px", border: "1px solid #ddd" }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {error && <p className="error">{error}</p>}
+      <SyncToDBButton />
     </div>
   );
 }
-
-const formatDate = (date) => {
-  {
-    return new Date(date).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  }
-};
 
 export default TaskTable;

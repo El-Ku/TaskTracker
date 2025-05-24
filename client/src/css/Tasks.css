@@ -1,154 +1,113 @@
-/* Tasks.css */
-
-/* General Styles */
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
-}
-
-.tasks-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Input Section */
-.task-input-section {
-  margin-bottom: 20px;
-}
-
-.input-row {
+/* Container around everything */
+.whole-table {
   display: flex;
-  gap: 10px;
-}
-
-#taskInput {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-#addBtn {
-  padding: 12px 18px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-#addBtn:hover {
-  background-color: #45a049;
-}
-
-.error {
-  color: #d8000c;
-  background-color: #ffd2d2;
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 8px;
-  font-size: 0.9rem;
-}
-
-/* Task Table */
-.task-table-container {
+  flex-direction: row;
+  margin-top: 20px;
   overflow-x: auto;
-}
-
-.task-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.task-table th,
-.task-table td {
-  padding: 12px 15px;
-  border: 1px solid #e0e0e0;
-  text-align: left;
-}
-
-.task-table th {
-  background-color: #f4f4f4;
-  font-weight: 600;
-}
-
-.task-desc {
-  width: 50%;
-}
-
-/* Task Status Styling */
-.task-row.done td {
-  background-color: #6ef779;
-}
-
-.task-row.paused td {
-  background-color: #ebdf58;
-}
-
-.task-row.pending td {
-  background-color: #e3f2fd;
-}
-
-/* Edit Field */
-.task-table input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-}
-
-/* Action Buttons */
-.btn {
-  margin: 2px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-}
-
-.btn:hover {
-  opacity: 0.85;
-}
-
-/* Clear All Button */
-.clearBtn {
-  background-color: #e53935;
-  color: white;
-  padding: 12px 20px;
-  border: none;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 1rem;
+  background-color: #fff;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cb-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px;
+  margin-right: 20px;
+}
+
+.cb-th,
+.cb-td {
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.cb-th {
+  background-color: #f4f4f4;
   cursor: pointer;
-  display: block;
-  margin: 0 auto;
 }
 
-.clearBtn:hover {
-  background-color: #d32f2f;
+/* Table styles */
+.task-table {
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
 }
 
-/* Responsive Tweaks */
-@media (max-width: 600px) {
-  .input-row {
-    flex-direction: column;
-  }
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
 
-  #addBtn {
-    width: 100%;
-  }
+th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
 
-  .btn {
-    width: 100%;
-    margin: 4px 0;
-  }
+#updateTasksBtn {
+  margin-top: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#updateTasksBtn:hover {
+  background-color: #218838;
+}
+
+/* Action buttons section */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.action-buttons button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.action-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.action-buttons button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+/* Error text */
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.status-done {
+  background-color: #d4edda; /* light green */
+}
+
+.status-pending {
+  background-color: #f1d77e; /* light yellow */
+}
+
+.status-paused {
+  background-color: #d9cccd; /* light red */
 }

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@tanstack/react-table": "^8.21.3",
     "axios": "^1.9.0",
     "lodash": "^4.17.21",
     "react": "^19.1.0",

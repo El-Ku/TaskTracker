@@ -1,46 +1,97 @@
 import { useTasks } from "../../contexts/TasksContext";
-import { ButtonText } from "../../../../CONSTANTS";
-import { deleteTasks, updateTaskStatus } from "../../services/taskApiCalls";
+import { updateTasks, deleteTasks } from "../../services/taskApiCalls";
 
 function ActionButtons({ task }) {
-  const { setTasks, setEditTaskId, setEditValue, setError } = useTasks();
+  const {
+    tasks,
+    setTasks,
+    setError,
+    setOriginalTasks,
+    setSelectedRows,
+    setSelectedSelectAll,
+    selectedRows,
+  } = useTasks();
 
-  const handleAction = async (action) => {
+  const deleteSelectedTasks = async () => {
+    const tasksToDelete = selectedRows.map((rowIndex) => tasks[rowIndex]._id);
     try {
-      if (action === "delete") {
-        const data = await deleteTasks(task._id);
-        if (data.result === "success") {
-          setTasks((prev) => prev.filter((t) => t._id !== task._id));
-        }
-      } else if (action === "edit") {
-        setEditTaskId(task._id);
-        setEditValue(task.desc);
-      } else {
-        const data = await updateTaskStatus(task._id, action);
-        if (data.result === "success") {
-          setTasks((prev) =>
-            prev.map((t) => (t._id === task._id ? { ...t, status: action } : t))
-          );
-        }
-      }
-      setError(null); // clear error
+      await deleteTasks(tasksToDelete);
+      setTasks(tasks.filter((task) => !tasksToDelete.includes(task._id)));
+      setOriginalTasks(tasks);
+      setError(null);
+      setSelectedRows([]);
+      setSelectedSelectAll(false);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const renderButton = (action) => (
-    <button
-      key={action}
-      onClick={() => handleAction(action)}
-      className={`btn btn-${action}`}
-    >
-      {ButtonText[action]}
-    </button>
-  );
+  const markAsDone = async () => {
+    changeStatus("done");
+  };
+
+  const markAsPaused = async () => {
+    changeStatus("paused");
+  };
+
+  const markAsPending = async () => {
+    changeStatus("pending");
+  };
+
+  const changeStatus = async (status) => {
+    const tasksToUpdate = selectedRows.map((rowIndex) => ({
+      _id: tasks[rowIndex]._id,
+      desc: tasks[rowIndex].desc,
+      status,
+    }));
+    try {
+      await updateTasks(tasksToUpdate);
+      const updatedTasks = tasks.map((task) =>
+        tasksToUpdate.find((t) => t._id === task._id)
+          ? { ...task, status }
+          : task
+      );
+      setTasks(updatedTasks);
+      setOriginalTasks(updatedTasks);
+      setError(null);
+      setSelectedRows([]);
+      setSelectedSelectAll(false);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
-    <td>{["done", "paused", "pending", "delete", "edit"].map(renderButton)}</td>
+    <div className="action-buttons">
+      <button
+        id="deleteTasksBtn"
+        onClick={async () => deleteSelectedTasks()}
+        disabled={!selectedRows || selectedRows.length === 0}
+      >
+        Delete Selected Tasks
+      </button>
+      <button
+        id="markAsDoneBtn"
+        onClick={async () => markAsDone()}
+        disabled={!selectedRows || selectedRows.length === 0}
+      >
+        Mark As Done
+      </button>
+      <button
+        id="markAsPendingBtn"
+        onClick={async () => markAsPending()}
+        disabled={!selectedRows || selectedRows.length === 0}
+      >
+        Mark As Pending
+      </button>
+      <button
+        id="markAsPausedBtn"
+        onClick={async () => markAsPaused()}
+        disabled={!selectedRows || selectedRows.length === 0}
+      >
+        Mark As Paused
+      </button>
+    </div>
   );
 }
 

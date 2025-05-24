@@ -7,10 +7,6 @@ const taskSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
-      type: Date,
-      default: Date.now(),
-    },
     status: {
       type: String,
       enum: Object.values(TaskStatus),

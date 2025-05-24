@@ -20,25 +20,13 @@ export const resetLoginLimiter = (ip) => {
   loginLimiter.resetKey(ip);
 };
 
-// Max 10 task additions/deleteAll in 10 seconds
-export const taskAddDeleteAllLimiter = rateLimit({
+// Max 10 task changes in 10 seconds
+export const taskRateLimiter = rateLimit({
   windowMs: 10 * oneSec,
   limit: 10,
   message: {
     result: "error",
     message: "You are adding or deleting tasks way too fast!",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Max 10 task delete/edit in 10 seconds
-export const taskDeleteEditLimiter = rateLimit({
-  windowMs: 10 * oneSec,
-  limit: 10,
-  message: {
-    result: "error",
-    message: "You are editing or deleting tasks way too fast!",
   },
   standardHeaders: true,
   legacyHeaders: false,
