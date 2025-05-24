@@ -48,6 +48,9 @@ This is a simple task tracker application built with MERN stack(MongoDB, Express
 - Basic profile page management
 - Password change functionality
 - Users can register on their own and delete their own accounts
+- The task table sortable by task name, status, and date created
+- Multiple tasks can be selected and their status can be changed with one click
+- Multiple fields of description and/or status can be edited manually and updated to the database with one click
 
 ## Technical information
 
@@ -61,9 +64,4 @@ This is a simple task tracker application built with MERN stack(MongoDB, Express
 
 ## What is next?
 
-- Add due dates to tasks. Due dates should be editable and optional.
-- Show tasks based on the due date. (closer due dates at the top)
-- Show completed tasks at the bottom of the list, paused tasks in the middle pending tasks at the top.
-- Add a 'completed' timestamp to tasks. When status is changed, remove this timestamp.
-- Put the edit task button in the task description field itself. Change symbol to a pencil icon.
 - Add an admin user to manage all users and tasks.
