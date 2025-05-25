@@ -76,6 +76,39 @@ export const tableSettings = () => {
       enableSorting: true,
     },
     {
+      accessorKey: "settings.fullName",
+      header: headerNames[6],
+      cell: ({ row, getValue, column }) => {
+        return (
+          <EditableCell
+            value={getValue()}
+            rowId={row.id}
+            rowIndex={row.index}
+            columnId={column.id}
+            updateData={table.options.meta.updateData}
+          />
+        );
+      },
+      enableSorting: true,
+    },
+
+    {
+      accessorKey: "settings.email",
+      header: headerNames[5],
+      cell: ({ row, getValue, column }) => {
+        return (
+          <EditableCell
+            value={getValue()}
+            rowId={row.id}
+            rowIndex={row.index}
+            columnId={column.id}
+            updateData={table.options.meta.updateData}
+          />
+        );
+      },
+      enableSorting: true,
+    },
+    {
       accessorKey: "role",
       header: headerNames[4],
       cell: ({ row, getValue, column }) => {

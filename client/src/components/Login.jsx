@@ -40,7 +40,6 @@ const Login = ({ mode }) => {
 
   const onSubmit = async (form) => {
     try {
-      console.log("Form submitted:", form);
       const endpoint = mode === "login" ? "login" : "register";
 
       const data = await makeApiCall(
