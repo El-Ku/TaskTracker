@@ -26,7 +26,8 @@ router
   .patch(profileUpdateLimiter, validate(userSchema, "body"), updateProfile) // update profile info
   .delete(deleteUser); // delete user account
 
-router.route("/update-password").post(profileUpdateLimiter, updatePassword);
-//.post(loginLimiter, validate(userAuthInfo, "body"), updatePassword); //validate before updating the password
+router
+  .route("/update-password")
+  .post(profileUpdateLimiter, validate(userSchema, "body"), updatePassword);
 
 export default router;

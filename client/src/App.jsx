@@ -4,6 +4,7 @@ import Profile from "./pages/Profile";
 import Tasks from "./pages/Tasks";
 import Navbar from "./components/Navbar";
 import ProtectedLayout from "./components/ProtectedLayout";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/logout" element={<LoginTabs />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </main>

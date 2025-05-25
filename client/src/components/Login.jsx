@@ -40,6 +40,7 @@ const Login = ({ mode }) => {
 
   const onSubmit = async (form) => {
     try {
+      console.log("Form submitted:", form);
       const endpoint = mode === "login" ? "login" : "register";
 
       const data = await makeApiCall(
@@ -52,7 +53,8 @@ const Login = ({ mode }) => {
         if (mode === "login") {
           localStorage.setItem("userName", form.username);
           localStorage.setItem("token", data.token);
-          navigate("/profile");
+          localStorage.setItem("userRole", data.role);
+          data.role === "user" ? navigate("/profile") : navigate("/admin");
         } else {
           alert("Registration successful! Please login.");
           window.location.href = "/";

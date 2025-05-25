@@ -4,6 +4,7 @@ import taskRouter from "./routes/taskRouter.js";
 import errorHandler from "./middleware/errorMiddleware.js";
 import userAuthRouter from "./routes/userAuthRouter.js";
 import profileRouter from "./routes/profileRouter.js";
+import adminRouter from "./routes/adminRouter.js";
 import cors from "cors";
 
 const app = express();
@@ -37,5 +38,6 @@ app.get("/", (req, res) => {
 app.use("/api/auth", userAuthRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/tasks", taskRouter);
+app.use("/api/admin", adminRouter);
 //app.use('/api/:userName/profile',profileRouter);
 app.use(errorHandler); // very important to place it at the very end to catch all errors.

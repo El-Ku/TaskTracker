@@ -52,5 +52,6 @@ export const loginUser = asyncHandler(async (req, res) => {
     result: "success",
     message: "User logged in successfully",
     token: generateToken(user._id),
+    role: user.role,
   });
 });
