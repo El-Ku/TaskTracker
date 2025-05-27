@@ -2,14 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
-
-const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters long")
-  .max(32, "Password must be at most 32 characters long")
-  .regex(/[A-Z]/, "Must include at least one uppercase letter")
-  .regex(/[a-z]/, "Must include at least one lowercase letter")
-  .regex(/[0-9]/, "Must include at least one number");
+import { passwordSchema } from "../../validation/zodSchemas";
 
 const schema = z
   .object({

@@ -1,0 +1,182 @@
+/* Container around everything */
+.whole-table {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cb-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px;
+  margin-right: 20px;
+}
+
+.cb-th,
+.cb-td {
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.cb-th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+/* Table styles */
+.task-table {
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+#updateTasksBtn {
+  margin-top: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#updateTasksBtn:hover {
+  background-color: #218838;
+}
+
+/* Action buttons section */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.action-buttons button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.action-buttons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.action-buttons button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+/* Error text */
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.status-done {
+  background-color: #d4edda; /* light green */
+}
+
+.status-pending {
+  background-color: #f1d77e; /* light yellow */
+}
+
+.status-paused {
+  background-color: #d9cccd; /* light red */
+}
+
+.add-new-users {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  font-family: sans-serif;
+}
+
+.add-new-users h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.add-new-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.add-new-user-row input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.add-new-user-row input:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #fff;
+}
+
+.add-new-user-row button {
+  padding: 8px 12px;
+  font-size: 18px;
+  line-height: 1;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-new-user-row button:hover {
+  background-color: #218838;
+}
+
+.add-new-users > button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 16px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-new-users > button:hover {
+  background-color: #0056b3;
+}

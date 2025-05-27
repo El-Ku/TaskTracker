@@ -30,7 +30,7 @@ function EditableCell({
       return;
     }
     setIsEditing(false);
-    updateData(rowId, columnId, rowIndex, cellValue);
+    updateData(columnId, rowIndex, cellValue);
   };
 
   return (

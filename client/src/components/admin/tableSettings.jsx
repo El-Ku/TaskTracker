@@ -6,6 +6,12 @@ import {
 } from "@tanstack/react-table";
 import { useAdmin } from "../../contexts/AdminContext";
 import { useState } from "react";
+import {
+  userNameSchema,
+  roleSchema,
+  fullNameSchema,
+  emailSchema,
+} from "../../validation/zodSchemas";
 
 export const tableSettings = () => {
   // State for data and sorting
@@ -64,6 +70,7 @@ export const tableSettings = () => {
             rowIndex={row.index} // Pass the table's row index (for logging)
             columnId={column.id}
             updateData={table.options.meta.updateData}
+            validationSchema={userNameSchema}
           />
         );
       },
@@ -86,6 +93,7 @@ export const tableSettings = () => {
             rowIndex={row.index}
             columnId={column.id}
             updateData={table.options.meta.updateData}
+            validationSchema={fullNameSchema}
           />
         );
       },
@@ -103,6 +111,7 @@ export const tableSettings = () => {
             rowIndex={row.index}
             columnId={column.id}
             updateData={table.options.meta.updateData}
+            validationSchema={emailSchema}
           />
         );
       },
@@ -119,6 +128,7 @@ export const tableSettings = () => {
             rowIndex={row.index}
             columnId={column.id}
             updateData={table.options.meta.updateData}
+            validationSchema={roleSchema}
           />
         );
       },
@@ -127,7 +137,7 @@ export const tableSettings = () => {
   ];
 
   // Function to update data
-  const updateData = (rowId, columnId, rowIndex, value) => {
+  const updateData = (columnId, rowIndex, value) => {
     setTasks((prev) =>
       prev.map((row, index) =>
         index === rowIndex ? { ...row, [columnId]: value } : row

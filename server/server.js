@@ -39,5 +39,5 @@ app.use("/api/auth", userAuthRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/admin", adminRouter);
-//app.use('/api/:userName/profile',profileRouter);
+
 app.use(errorHandler); // very important to place it at the very end to catch all errors.

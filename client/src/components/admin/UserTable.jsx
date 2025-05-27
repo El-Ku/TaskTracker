@@ -6,7 +6,14 @@ import { tableSettings } from "./tableSettings";
 import { flexRender } from "@tanstack/react-table";
 
 function UserTable() {
-  const { setUsers, error, setError, setOriginalUsers } = useAdmin();
+  const {
+    setUsers,
+    error,
+    setError,
+    setOriginalUsers,
+    newUsersAdded,
+    setNewUsersAdded,
+  } = useAdmin();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,13 +24,13 @@ function UserTable() {
           setOriginalUsers(data);
         }
         setError(null);
+        setNewUsersAdded(false);
       } catch (err) {
         setError(err.message);
       }
     };
-
-    fetchUsers();
-  }, []);
+    if (newUsersAdded) fetchUsers();
+  }, [newUsersAdded]);
 
   const table = tableSettings();
 

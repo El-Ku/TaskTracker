@@ -1,4 +1,3 @@
-import { z } from "zod";
 import EditableCell from "./EditableCell";
 import {
   useReactTable,
@@ -7,6 +6,7 @@ import {
 } from "@tanstack/react-table";
 import { useTasks } from "../../contexts/TasksContext";
 import { useState } from "react";
+import { schemaDesc, schemaStatus } from "../../validation/zodSchemas";
 
 export const tableSettings = () => {
   // State for data and sorting
@@ -21,15 +21,6 @@ export const tableSettings = () => {
   } = useTasks();
 
   const headerNames = ["Select", "Id", "Description", "Created @", "Status"];
-
-  const schemaDesc = z
-    .string()
-    .min(3, "Description should be at least 3 characters");
-  const schemaStatus = z.enum(["pending", "done", "paused"], {
-    errorMap: () => ({
-      message: "Status should be one of: pending, done, paused",
-    }),
-  });
 
   // Define table columns
   const columns = [
@@ -99,7 +90,7 @@ export const tableSettings = () => {
   ];
 
   // Function to update data
-  const updateData = (rowId, columnId, rowIndex, value) => {
+  const updateData = (columnId, rowIndex, value) => {
     setTasks((prev) =>
       prev.map((row, index) =>
         index === rowIndex ? { ...row, [columnId]: value } : row

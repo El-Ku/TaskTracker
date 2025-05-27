@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
-import FormField from "../FormField";
 import isEqual from "lodash/isEqual";
+import { fullNameSchema, emailSchema } from "../../validation/zodSchemas";
 
 const schema = z.object({
-  fullName: z.string().min(3, "Full name must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
+  fullName: fullNameSchema,
+  email: emailSchema,
 });
 
 function ChangeUserInfo() {

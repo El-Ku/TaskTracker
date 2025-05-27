@@ -3,68 +3,80 @@ import Task from "../models/taskModel.js";
 
 // Load all tasks. Called when webpage loads first
 export const loadAll = asyncHandler(async (req, res) => {
-  const userId = req.user._id; // current user's id from middleware
-  const tasks = await Task.find({ userId });
-  if (tasks.length === 0) {
-    res.json({ result: "error", message: "Tasks not found" });
-  } else {
-    res.json({ payload: tasks });
+  try {
+    const userId = req.user._id; // current user's id from middleware
+    const tasks = await Task.find({ userId });
+    if (tasks.length === 0) {
+      res.json({ result: "error", message: "Tasks not found" });
+    } else {
+      res.json({ payload: tasks });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
 // Add one or more tasks to the database
 // remove duplicates from within what is received from client and what is already there in db
 export const addTasks = asyncHandler(async (req, res) => {
-  const newFilteredTasks = await tasksSanityCheck(
-    req.user._id,
-    req.body,
-    false
-  ); // sanity check on received tasks
-  const uniqueTasks = await Task.insertMany(newFilteredTasks); // save to database after removing duplicates
-  if (uniqueTasks.length === 0) {
-    res.status(404).json({
-      result: "error",
-      message: "No unique tasks to save to the database",
-      payload: uniqueTasks,
-    });
-  } else {
-    res.json({
-      result: "success",
-      message: "Tasks were saved to the database successfully",
-      payload: uniqueTasks,
-    });
+  try {
+    const newFilteredTasks = await tasksSanityCheck(
+      req.user._id,
+      req.body,
+      false
+    ); // sanity check on received tasks
+    const uniqueTasks = await Task.insertMany(newFilteredTasks); // save to database after removing duplicates
+    if (uniqueTasks.length === 0) {
+      res.status(404).json({
+        result: "error",
+        message: "No unique tasks to save to the database",
+        payload: uniqueTasks,
+      });
+    } else {
+      res.json({
+        result: "success",
+        message: "Tasks were saved to the database successfully",
+        payload: uniqueTasks,
+      });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
 export const deleteTasks = asyncHandler(async (req, res) => {
-  let acknowledged, deletedCount;
-  if (req.body === undefined) {
-    ({ acknowledged, deletedCount } = await Task.deleteMany({
-      userId: req.user._id,
-    }));
-  } else {
-    ({ acknowledged, deletedCount } = await Task.deleteMany({
-      _id: { $in: req.body },
-      userId: req.user._id,
-    }));
-  }
-  if (acknowledged) {
-    if (deletedCount > 0) {
-      res.json({
-        result: "success",
-        message: `All ${deletedCount} tasks were deleted from the database`,
-      });
+  try {
+    let acknowledged, deletedCount;
+    if (req.body === undefined) {
+      ({ acknowledged, deletedCount } = await Task.deleteMany({
+        userId: req.user._id,
+      }));
     } else {
-      res.status(404).json({
+      ({ acknowledged, deletedCount } = await Task.deleteMany({
+        _id: { $in: req.body },
+        userId: req.user._id,
+      }));
+    }
+    if (acknowledged) {
+      if (deletedCount > 0) {
+        res.json({
+          result: "success",
+          message: `All ${deletedCount} tasks were deleted from the database`,
+        });
+      } else {
+        res.status(404).json({
+          result: "error",
+          message: `There were no tasks in the database to delete`,
+        });
+      }
+    } else {
+      res.status(500).json({
         result: "error",
-        message: `There were no tasks in the database to delete`,
+        message: `Couldnt delete any tasks from the database`,
       });
     }
-  } else {
-    res.status(500).json({
-      result: "error",
-      message: `Couldnt delete any tasks from the database`,
-    });
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -78,21 +90,27 @@ export const updateTasks = asyncHandler(async (req, res) => {
     });
   }
   newFilteredTasks.forEach(async (task) => {
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: task._id, userId: req.user._id }, // search conditions
-      { $set: task }, // updates to apply
-      { new: true, runValidators: true } // return the updated document
-    );
-    if (updatedTask === null) {
-      return res.status(404).json({
-        result: "error",
-        message:
-          "Task ID not found on our server. Unable to update the task with id: " +
-          task._id,
-      });
+    try {
+      const updatedTask = await Task.findOneAndUpdate(
+        { _id: task._id, userId: req.user._id }, // search conditions
+        { $set: task }, // updates to apply
+        { new: true, runValidators: true } // return the updated document
+      );
+      if (updatedTask === null) {
+        return res.status(404).json({
+          result: "error",
+          message:
+            "Task ID not found on our server. Unable to update the task with id: " +
+            task._id,
+        });
+      }
+    } catch (error) {
+      next(error);
     }
   });
-  res.json({ result: "success", message: "Tasks were updated successfully" });
+  if (res.status == 200) {
+    res.json({ result: "success", message: "Tasks were updated successfully" });
+  }
 });
 
 const tasksSanityCheck = async (userId, reqBody, patch = false) => {

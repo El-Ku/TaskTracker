@@ -28,3 +28,19 @@ export const clearAllUsers = async () => {
     throw err;
   }
 };
+
+export const updateUsers = async (modifiedUsers) => {
+  try {
+    return await makeApiCall("/api/admin/users/", "PATCH", modifiedUsers);
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const addUsers = async (newUsers) => {
+  try {
+    return await makeApiCall("/api/admin/users/", "POST", newUsers);
+  } catch (err) {
+    throw err;
+  }
+};

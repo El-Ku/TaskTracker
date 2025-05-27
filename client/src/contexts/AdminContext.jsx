@@ -10,6 +10,7 @@ export const AdminProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedSelectAll, setSelectedSelectAll] = useState(false);
+  const [newUsersAdded, setNewUsersAdded] = useState(true);
 
   return (
     <AdminContext.Provider
@@ -28,6 +29,8 @@ export const AdminProvider = ({ children }) => {
         setSelectedRows,
         selectedSelectAll,
         setSelectedSelectAll,
+        newUsersAdded,
+        setNewUsersAdded,
       }}
     >
       {children}
