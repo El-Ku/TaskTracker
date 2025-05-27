@@ -3,7 +3,7 @@ import { addTasks } from "../../services/taskApiCalls";
 import { useTasks } from "../../contexts/TasksContext";
 
 function TaskInput() {
-  const { tasks, setTasks } = useTasks();
+  const { tasks, setTasks, taskCount, setTaskCount } = useTasks();
   const [taskInput, setTaskInput] = useState("");
   const [error, setError] = useState(null);
 
@@ -15,6 +15,7 @@ function TaskInput() {
     try {
       const newTasks = await addTasks(taskInput);
       setTasks([...tasks, ...newTasks]);
+      setTaskCount(taskCount + newTasks.length);
       setTaskInput(""); // clear input
       setError(null); // clear error
     } catch (err) {
@@ -43,6 +44,9 @@ function TaskInput() {
         <button id="addBtn" onClick={async () => addTasksToDatabase()}>
           Add
         </button>
+        <p>
+          You have a total of <strong>{taskCount} </strong>tasks
+        </p>
       </div>
       {error && <p className="error">{error}</p>}
     </div>

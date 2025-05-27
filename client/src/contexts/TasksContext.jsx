@@ -10,6 +10,7 @@ export const TasksProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedSelectAll, setSelectedSelectAll] = useState(false);
+  const [taskCount, setTaskCount] = useState(0);
 
   return (
     <TasksContext.Provider
@@ -28,6 +29,8 @@ export const TasksProvider = ({ children }) => {
         setSelectedRows,
         selectedSelectAll,
         setSelectedSelectAll,
+        taskCount,
+        setTaskCount,
       }}
     >
       {children}

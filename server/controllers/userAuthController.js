@@ -8,7 +8,7 @@ import {
 } from "../middleware/rateLimitMiddleware";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   // check if user already exists in the database
   const userExists = await User.findOne({ username });
   if (userExists) {
@@ -21,6 +21,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   const newUser = {
     username,
     password: hashedPassword,
+    email: email,
+    ...(username === "admin" && { role: "admin" }),
   };
   const user = await User.create(newUser);
   if (user) {

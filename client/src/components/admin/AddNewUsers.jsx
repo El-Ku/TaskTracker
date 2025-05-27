@@ -11,7 +11,7 @@ const AddNewUsers = () => {
   const { setError, setNewUsersAdded } = useAdmin();
 
   const [newUsers, setNewUsers] = useState([
-    { username: "aas", email: "w1212@fssd.com", password: "Elku1234" },
+    { username: "", email: "", password: "" },
   ]);
 
   const handleChange = (index, field, value) => {

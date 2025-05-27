@@ -76,7 +76,7 @@ export const addUsers = asyncHandler(async (req, res, next) => {
     const newUser = {
       username: user.username,
       password: hashedPassword,
-      settings: { email: user.email },
+      email: user.email,
     };
     try {
       await User.create(newUser);
@@ -88,5 +88,31 @@ export const addUsers = asyncHandler(async (req, res, next) => {
   res.json({
     result: "success",
     message: `${newUsers.length} users were successfully added to the database`,
+  });
+});
+
+export const updateUsers = asyncHandler(async (req, res, next) => {
+  const modifiedUsers = req.body;
+  const bulkOps = modifiedUsers.map((user) => ({
+    updateOne: {
+      filter: { _id: user._id },
+      update: {
+        $set: {
+          username: user.username,
+          role: user.role,
+          email: user.email,
+          "settings.fullName": user.settings.fullName,
+        },
+      },
+    },
+  }));
+  try {
+    await User.bulkWrite(bulkOps);
+  } catch (error) {
+    return next(error);
+  }
+  res.json({
+    result: "success",
+    message: "Users were successfully updated",
   });
 });

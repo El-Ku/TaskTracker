@@ -5,7 +5,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useAdmin } from "../../contexts/AdminContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   userNameSchema,
   roleSchema,
@@ -18,6 +18,7 @@ export const tableSettings = () => {
   const [sorting, setSorting] = useState([]);
   const {
     users,
+    setUsers,
     selectedRows,
     setSelectedRows,
     selectedSelectAll,
@@ -29,9 +30,9 @@ export const tableSettings = () => {
     "Id",
     "Username",
     "Registered @",
-    "Role",
-    "Email",
     "Fullname",
+    "Email",
+    "Role",
   ];
 
   // Define table columns
@@ -43,7 +44,7 @@ export const tableSettings = () => {
           type="checkbox"
           checked={table.options.meta.selectedSelectAll}
           onChange={table.options.meta.handleSelectAll}
-          aria-label="Select all tasks"
+          aria-label="Select all users"
           className="cb-column"
         />
       ),
@@ -84,7 +85,8 @@ export const tableSettings = () => {
     },
     {
       accessorKey: "settings.fullName",
-      header: headerNames[6],
+      id: "fullName",
+      header: headerNames[4],
       cell: ({ row, getValue, column }) => {
         return (
           <EditableCell
@@ -101,7 +103,7 @@ export const tableSettings = () => {
     },
 
     {
-      accessorKey: "settings.email",
+      accessorKey: "email",
       header: headerNames[5],
       cell: ({ row, getValue, column }) => {
         return (
@@ -119,7 +121,7 @@ export const tableSettings = () => {
     },
     {
       accessorKey: "role",
-      header: headerNames[4],
+      header: headerNames[6],
       cell: ({ row, getValue, column }) => {
         return (
           <EditableCell
@@ -138,10 +140,15 @@ export const tableSettings = () => {
 
   // Function to update data
   const updateData = (columnId, rowIndex, value) => {
-    setTasks((prev) =>
-      prev.map((row, index) =>
-        index === rowIndex ? { ...row, [columnId]: value } : row
-      )
+    setUsers((prev) =>
+      prev.map((row, index) => {
+        if (index !== rowIndex) {
+          return row;
+        }
+        return columnId === "fullName"
+          ? { ...row, settings: { ...row.settings, fullName: value } }
+          : { ...row, [columnId]: value };
+      })
     );
   };
 

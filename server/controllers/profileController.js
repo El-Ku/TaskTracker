@@ -25,7 +25,8 @@ export const updateProfile = asyncHandler(async (req, res) => {
         .status(404)
         .json({ result: "error", message: "User not found" });
     }
-    user.settings = req.body;
+    user.settings.fullName = req.body.fullName;
+    user.email = req.body.email;
     const savedUser = await user.save();
     if (String(savedUser._id) === String(req.user._id)) {
       res.json({ result: "success" });

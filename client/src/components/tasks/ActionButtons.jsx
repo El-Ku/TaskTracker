@@ -10,6 +10,8 @@ function ActionButtons({ task }) {
     setSelectedRows,
     setSelectedSelectAll,
     selectedRows,
+    taskCount,
+    setTaskCount,
   } = useTasks();
 
   const deleteSelectedTasks = async () => {
@@ -18,6 +20,7 @@ function ActionButtons({ task }) {
       await deleteTasks(tasksToDelete);
       setTasks(tasks.filter((task) => !tasksToDelete.includes(task._id)));
       setOriginalTasks(tasks);
+      setTaskCount(taskCount - tasksToDelete.length);
       setError(null);
       setSelectedRows([]);
       setSelectedSelectAll(false);

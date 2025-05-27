@@ -3,21 +3,29 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../services/makeApiCall";
 import { useNavigate } from "react-router-dom";
-import { passwordSchema, userNameSchema } from "../validation/zodSchemas";
+import {
+  passwordSchema,
+  userNameSchema,
+  emailSchema,
+} from "../validation/zodSchemas";
 
-const schema = z
-  .object({
-    username: userNameSchema,
-    password: passwordSchema,
-  })
-  .refine(
-    (data) =>
-      data.confirmPassword ? data.password === data.confirmPassword : true,
-    {
-      message: "Passwords do not match", // highlight the confirmPassword field
-      path: ["confirmPassword"],
-    }
-  );
+const getSchema = (mode) => {
+  return z
+    .object({
+      username: userNameSchema,
+      password: passwordSchema,
+      ...(mode === "register" && { email: emailSchema }),
+      confirmPassword: z.string().optional(), // add this so refine can access it
+    })
+    .refine(
+      (data) =>
+        data.confirmPassword ? data.password === data.confirmPassword : true,
+      {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+      }
+    );
+};
 
 const Login = ({ mode }) => {
   const {
@@ -26,7 +34,7 @@ const Login = ({ mode }) => {
     formState: { errors, isSubmitting },
     setError,
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(getSchema(mode)),
   });
 
   const navigate = useNavigate();
@@ -68,6 +76,10 @@ const Login = ({ mode }) => {
       <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
         <input type="text" placeholder="Username" {...register("username")} />
         {errors.username && <p className="error">{errors.username.message}</p>}
+        {mode === "register" && (
+          <input type="email" placeholder="Email" {...register("email")} />
+        )}
+        {errors.email && <p className="error">{errors.email.message}</p>}
         <input
           type="password"
           placeholder="Password"

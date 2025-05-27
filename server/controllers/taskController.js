@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import Task from "../models/taskModel.js";
 
+const MAX_TASKS = 20;
+
 // Load all tasks. Called when webpage loads first
 export const loadAll = asyncHandler(async (req, res) => {
   try {
@@ -25,6 +27,13 @@ export const addTasks = asyncHandler(async (req, res) => {
       req.body,
       false
     ); // sanity check on received tasks
+    if (typeof newFilteredTasks === "string") {
+      //ran out of tasks quota
+      return res.status(400).json({
+        result: "error",
+        message: newFilteredTasks,
+      });
+    }
     const uniqueTasks = await Task.insertMany(newFilteredTasks); // save to database after removing duplicates
     if (uniqueTasks.length === 0) {
       res.status(404).json({
@@ -133,7 +142,11 @@ const tasksSanityCheck = async (userId, reqBody, patch = false) => {
   }));
   const tasks = await Task.find({ userId }); // find all current tasks of an user
   const taskKeys = new Set(tasks.map((task) => `${task.desc}||${task.status}`));
-  return newTasks.filter(
+  const uniqueTasks = newTasks.filter(
     (task) => !taskKeys.has(`${task.desc}||${task.status}`)
   );
+  if (uniqueTasks.length + tasks.length > MAX_TASKS) {
+    return `You cannot save more than ${MAX_TASKS} tasks`;
+  }
+  return uniqueTasks;
 };

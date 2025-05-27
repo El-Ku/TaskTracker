@@ -5,6 +5,7 @@ import {
   getAllUsers,
   deleteUsers,
   addUsers,
+  updateUsers,
 } from "../controllers/adminController.js";
 
 const router = express.Router({ mergeParams: true });
@@ -13,7 +14,11 @@ router.use(express.json());
 // Apply `protect` and `admin` to _all_ subsequent routes
 router.use(protect, isAdmin);
 
-router.route("/users").get(getAllUsers).delete(deleteUsers).post(addUsers);
-//.patch(updateUsers);
+router
+  .route("/users")
+  .get(getAllUsers)
+  .delete(deleteUsers)
+  .post(addUsers)
+  .patch(updateUsers);
 
 export default router;

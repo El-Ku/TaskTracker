@@ -29,8 +29,9 @@ function EditableCell({
       setError(result.error.errors[0].message);
       return;
     }
+    setError(null);
     setIsEditing(false);
-    updateData(rowId, columnId, rowIndex, cellValue);
+    updateData(columnId, rowIndex, cellValue);
   };
 
   return (

@@ -12,15 +12,17 @@ function SyncToDBButton() {
           originalUser.username !== user.username ||
           originalUser.role !== user.role ||
           originalUser.email !== user.email ||
-          originalUser.fullName !== user.fullName
+          originalUser.settings.fullName !== user.settings.fullName
         );
       })
-      .map(({ _id, username, role, email, fullName }) => ({
+      .map(({ _id, username, role, email, settings }) => ({
         _id,
         username,
         role,
         email,
-        fullName,
+        settings: {
+          fullName: settings.fullName,
+        },
       }));
 
     if (modifiedUsers.length === 0) {

@@ -16,7 +16,7 @@ export const getTasks = async () => {
 };
 
 export const addTasks = async (taskInput) => {
-  const tasksArraySchema = z.array(schemaDesc);
+  const tasksArraySchema = z.array(z.object({ desc: schemaDesc }));
   try {
     const trimmed = taskInput.trim();
     if (!trimmed) return;

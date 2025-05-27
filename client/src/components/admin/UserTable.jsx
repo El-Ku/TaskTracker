@@ -7,6 +7,7 @@ import { flexRender } from "@tanstack/react-table";
 
 function UserTable() {
   const {
+    users,
     setUsers,
     error,
     setError,
@@ -37,6 +38,9 @@ function UserTable() {
   return (
     <div>
       <ActionButtons />
+      <p>
+        You have a total of <strong>{users.length} </strong>users
+      </p>
       <div className="whole-table">
         <table className="task-table">
           <thead>

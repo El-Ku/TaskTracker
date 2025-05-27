@@ -4,7 +4,7 @@ import {
   loginLimiter,
   userRegLimiter,
 } from "../middleware/rateLimitMiddleware";
-import { userRegInfo } from "../validation/joiSchema.js";
+import { userRegInfoSchema } from "../validation/joiSchema.js";
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());
@@ -13,7 +13,7 @@ import { registerUser, loginUser } from "../controllers/userAuthController.js";
 
 router
   .route("/register")
-  .post(userRegLimiter, validate(userRegInfo, "body"), registerUser);
+  .post(userRegLimiter, validate(userRegInfoSchema, "body"), registerUser);
 
 router.route("/login").post(loginLimiter, loginUser); //doesnt need validation here
 

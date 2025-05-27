@@ -1,62 +1,77 @@
 import coreJoi from "joi";
 import joiDate from "@joi/date";
 const Joi = coreJoi.extend(joiDate);
-import { TaskStatus } from "../../CONSTANTS.js";
 
 export const mongoObjectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
-const passwordSchema = Joi.string()
-  .min(8)
-  .max(25)
-  .pattern(/^[A-Za-z0-9]{8,25}/) // Pattern for letters, numbers, and special chars
-  .regex(/[A-Z]/) // At least one uppercase letter
-  .regex(/[0-9]/) // At least one number
-  .required();
-
-const usernameSchema = Joi.string()
-  .pattern(/^[a-zA-Z0-9_-]+$/) // Allows only alphanumeric, underscores and hyphens
-  .min(3) // Minimum length of 3 characters
-  .max(30) // Maximum length of 30 characters
-  .regex(/[a-zA-Z]/) // Ensure at least one letter (case insensitive)
-  .required(); // Make it a required field
-
-export const userRegInfo = Joi.object({
-  username: usernameSchema,
-  password: passwordSchema,
+export const userNameSchema = Joi.string().min(3).required().messages({
+  "string.min": "Username is required",
+  "any.required": "Username is required",
 });
 
-export const userPassChgInfo = Joi.object({
+export const emailSchema = Joi.string().email().required().messages({
+  "string.email": "Invalid email",
+  "any.required": "Email is required",
+});
+
+export const passwordSchema = Joi.string()
+  .min(8)
+  .max(32)
+  .pattern(/[A-Z]/, "uppercase")
+  .pattern(/[a-z]/, "lowercase")
+  .pattern(/[0-9]/, "number")
+  .required()
+  .messages({
+    "string.min": "Password must be at least 8 characters long",
+    "string.max": "Password must be at most 32 characters long",
+    "string.pattern.name": "Password must include at least one {#name} letter",
+    "any.required": "Password is required",
+  });
+
+export const fullNameSchema = Joi.string().min(3).messages({
+  "string.min": "Full name must be at least 3 characters",
+});
+
+export const roleSchema = Joi.string()
+  .valid("user", "admin")
+  .required()
+  .messages({
+    "any.only": "Role should be one of: user, admin",
+    "any.required": "Role is required",
+  });
+
+export const statusSchema = Joi.string()
+  .valid("pending", "done", "paused")
+  .required()
+  .messages({
+    "any.only": "Status should be one of: pending, done, paused",
+    "any.required": "Status is required",
+  });
+
+export const descSchema = Joi.string().min(3).max(500).required().messages({
+  "string.min": "Description should be at least 3 characters",
+  "string.max": "Description should not exceed 500 characters",
+  "any.required": "Description is required",
+});
+
+export const userRegInfoSchema = Joi.object({
+  username: userNameSchema,
+  password: passwordSchema,
+  email: emailSchema,
+});
+
+export const userPassChgInfoSchema = Joi.object({
   currentPassword: passwordSchema,
   newPassword: passwordSchema,
 });
 
-const dobSchema = Joi.object({
-  dob: Joi.date()
-    .format("YYYY-MM-DD")
-    .messages({
-      "date.format": "Invalid date format.  Must be YYYY-MM-DD",
-      "any.required": "Date of birth is required",
-    })
-    .greater("1940-01-01")
-    .less("2000-01-01"),
-});
-
 export const userSchema = Joi.object({
-  fullName: Joi.string().min(2).max(50),
-  lastName: Joi.string().min(2).max(50),
-  dob: dobSchema,
-  email: Joi.string().email(),
+  fullName: fullNameSchema,
+  email: emailSchema,
 });
-
-const taskDescSchema = Joi.string()
-  .min(3) // Minimum 3 characters
-  .max(500) // Maxumum 500 characters
-  .pattern(/^[a-zA-Z0-9 _-]+$/); // Only letters, numbers, underscores, hyphens, spaces
-
-const taskStatusSchema = Joi.string().valid(...Object.values(TaskStatus));
 
 export const taskSchema = Joi.object({
   _id: mongoObjectId,
-  desc: taskDescSchema,
-  status: taskStatusSchema,
+  desc: descSchema,
+  status: statusSchema,
 });
