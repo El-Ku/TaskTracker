@@ -10,6 +10,9 @@ import cors from "cors";
 const app = express();
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
+// Trust proxy to correctly handle client IPs behind proxies
+app.set("trust proxy", true);
+
 const allowedOrigin =
   process.env.NODE_ENV === "production"
     ? "https://tasktracker-client-yuyo.onrender.com"
