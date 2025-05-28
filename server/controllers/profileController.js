@@ -11,7 +11,10 @@ export const getUserInfo = asyncHandler(async (req, res) => {
         .status(404)
         .json({ result: "error", message: "User not found" });
     }
-    res.json({ result: "success", payload: user.settings });
+    res.json({
+      result: "success",
+      payload: { fullName: user.settings.fullName, email: user.email },
+    });
   } catch (error) {
     next(error);
   }

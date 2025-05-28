@@ -32,12 +32,10 @@ function Navbar() {
       <ul>
         {!isLoggedIn && <li onClick={() => navigate("/")}>Home</li>}
         {isLoggedIn && <li onClick={() => navigate("/profile")}>Profile</li>}
-        {isLoggedIn && !isAdmin && (
-          <li onClick={() => navigate("/tasks")}>Tasks</li>
-        )}
         {isLoggedIn && isAdmin && (
           <li onClick={() => navigate("/admin")}>Dashboard</li>
         )}
+        {isLoggedIn && <li onClick={() => navigate("/tasks")}>Tasks</li>}
         {isLoggedIn && <li onClick={handleLogout}>Logout</li>}
       </ul>
     </nav>

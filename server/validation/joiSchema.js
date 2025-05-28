@@ -48,10 +48,14 @@ export const statusSchema = Joi.string()
     "any.required": "Status is required",
   });
 
-export const descSchema = Joi.string().min(3).max(500).required().messages({
+const descRule = Joi.string().min(3).max(500).required().messages({
   "string.min": "Description should be at least 3 characters",
   "string.max": "Description should not exceed 500 characters",
   "any.required": "Description is required",
+});
+
+export const descSchema = Joi.object({
+  desc: descRule,
 });
 
 export const userRegInfoSchema = Joi.object({
@@ -63,6 +67,7 @@ export const userRegInfoSchema = Joi.object({
 export const userPassChgInfoSchema = Joi.object({
   currentPassword: passwordSchema,
   newPassword: passwordSchema,
+  confirmPassword: passwordSchema,
 });
 
 export const userSchema = Joi.object({
@@ -72,6 +77,6 @@ export const userSchema = Joi.object({
 
 export const taskSchema = Joi.object({
   _id: mongoObjectId,
-  desc: descSchema,
+  desc: descRule,
   status: statusSchema,
 });

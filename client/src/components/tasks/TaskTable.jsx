@@ -7,7 +7,8 @@ import { tableSettings } from "./tableSettings";
 import { flexRender } from "@tanstack/react-table";
 
 function TaskTable() {
-  const { setTasks, error, setError, setOriginalTasks } = useTasks();
+  const { setTasks, error, setError, setOriginalTasks, setTaskCount } =
+    useTasks();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -15,6 +16,7 @@ function TaskTable() {
         const data = await getTasks();
         if (data) {
           setTasks(data);
+          setTaskCount(data.length);
           setOriginalTasks(data);
         }
         setError(null);

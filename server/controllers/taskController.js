@@ -4,7 +4,7 @@ import Task from "../models/taskModel.js";
 const MAX_TASKS = 20;
 
 // Load all tasks. Called when webpage loads first
-export const loadAll = asyncHandler(async (req, res) => {
+export const loadAll = asyncHandler(async (req, res, next) => {
   try {
     const userId = req.user._id; // current user's id from middleware
     const tasks = await Task.find({ userId });
@@ -20,7 +20,7 @@ export const loadAll = asyncHandler(async (req, res) => {
 
 // Add one or more tasks to the database
 // remove duplicates from within what is received from client and what is already there in db
-export const addTasks = asyncHandler(async (req, res) => {
+export const addTasks = asyncHandler(async (req, res, next) => {
   try {
     const newFilteredTasks = await tasksSanityCheck(
       req.user._id,
@@ -53,7 +53,7 @@ export const addTasks = asyncHandler(async (req, res) => {
   }
 });
 
-export const deleteTasks = asyncHandler(async (req, res) => {
+export const deleteTasks = asyncHandler(async (req, res, next) => {
   try {
     let acknowledged, deletedCount;
     if (req.body === undefined) {
@@ -90,7 +90,7 @@ export const deleteTasks = asyncHandler(async (req, res) => {
 });
 
 // Modify a list of tasks
-export const updateTasks = asyncHandler(async (req, res) => {
+export const updateTasks = asyncHandler(async (req, res, next) => {
   const newFilteredTasks = await tasksSanityCheck(req.user._id, req.body, true); // sanity check on received tasks
   if (newFilteredTasks.length === 0) {
     return res.status(404).json({
@@ -117,7 +117,7 @@ export const updateTasks = asyncHandler(async (req, res) => {
       next(error);
     }
   });
-  if (res.status == 200) {
+  if (res.statusCode == 200) {
     res.json({ result: "success", message: "Tasks were updated successfully" });
   }
 });

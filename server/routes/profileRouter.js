@@ -1,6 +1,6 @@
 import express from "express";
 import protect from "../middleware/protectMiddleware.js";
-import { userSchema } from "../validation/joiSchema.js";
+import { userPassChgInfoSchema, userSchema } from "../validation/joiSchema.js";
 import validate from "../middleware/validateMiddleware.js";
 import {
   refreshLimiter,
@@ -28,6 +28,10 @@ router
 
 router
   .route("/update-password")
-  .post(profileUpdateLimiter, validate(userSchema, "body"), updatePassword);
+  .post(
+    profileUpdateLimiter,
+    validate(userPassChgInfoSchema, "body"),
+    updatePassword
+  );
 
 export default router;

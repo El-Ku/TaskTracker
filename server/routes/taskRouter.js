@@ -1,6 +1,6 @@
 import express from "express";
 import protect from "../middleware/protectMiddleware.js";
-import { mongoObjectId, taskSchema } from "../validation/joiSchema.js";
+import { descSchema, taskSchema } from "../validation/joiSchema.js";
 import validate from "../middleware/validateMiddleware.js";
 import {
   taskRateLimiter,
@@ -23,7 +23,7 @@ router.use(protect);
 router
   .route("/")
   .get(refreshLimiter, loadAll) // load all tasks
-  .post(taskRateLimiter, validate(taskSchema, "body"), addTasks) // Add tasks
+  .post(taskRateLimiter, validate(descSchema, "body"), addTasks) // Add tasks
   .patch(taskRateLimiter, validate(taskSchema, "body"), updateTasks) // update task status
   .delete(taskRateLimiter, deleteTasks); // delete multiple or all tasks
 
