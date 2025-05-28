@@ -61,6 +61,7 @@ export const descSchema = Joi.object({
 export const userRegInfoSchema = Joi.object({
   username: userNameSchema,
   password: passwordSchema,
+  confirmPassword: passwordSchema,
   email: emailSchema,
 });
 

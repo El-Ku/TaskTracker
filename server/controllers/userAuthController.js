@@ -6,6 +6,7 @@ import {
   resetLoginLimiter,
   resetRegLimiter,
 } from "../middleware/rateLimitMiddleware";
+import { sendWelcomeEmail } from "../utils/generateEmails.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, password, email } = req.body;
@@ -25,6 +26,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     ...(username === "admin" && { role: "admin" }),
   };
   const user = await User.create(newUser);
+  sendWelcomeEmail(email, username);
   if (user) {
     resetRegLimiter(req.ip); //reset register rate limit
     return res.json({
