@@ -68,15 +68,12 @@ function ActionButtons({ task }) {
   return (
     <div className="flex flex-row gap-4 px-6 mb-4 justify-center flex-wrap">
       <SingleActionButton action={deleteSelectedTasks} text="Delete Tasks" />
-      <SingleActionButton action={changeStatus("done")} text="Mark as Done" />
+      <SingleActionButton action={changeStatus("done")} text="Mark Done" />
       <SingleActionButton
         action={changeStatus("pending")}
-        text="Mark as Pending"
+        text="Mark Pending"
       />
-      <SingleActionButton
-        action={changeStatus("paused")}
-        text="Mark as Paused"
-      />
+      <SingleActionButton action={changeStatus("paused")} text="Mark Paused" />
     </div>
   );
 }
