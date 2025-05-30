@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "../css/Navbar.css"; // Assuming you have a CSS file for styling
 
 function Navbar() {
   const navigate = useNavigate();
@@ -25,11 +24,14 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar">
-      <p className="welcome-user-text">
-        Welcome {localStorage.getItem("userName")}
+    <nav className="flex justify-between items-center p-4 text-xl bg-blue-500 text-white">
+      <p>
+        Welcome{" "}
+        <span className="font-bold text-lg italic">
+          {localStorage.getItem("userName")}
+        </span>
       </p>
-      <ul>
+      <ul className="flex flex-row gap-4">
         {!isLoggedIn && <li onClick={() => navigate("/")}>Home</li>}
         {isLoggedIn && <li onClick={() => navigate("/profile")}>Profile</li>}
         {isLoggedIn && isAdmin && (

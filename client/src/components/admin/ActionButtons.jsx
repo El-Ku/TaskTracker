@@ -27,7 +27,7 @@ function ActionButtons({ user }) {
   };
 
   return (
-    <div className="action-buttons">
+    <div className="action-button">
       <button
         id="deleteusersBtn"
         onClick={async () => deleteSelectedUsers()}

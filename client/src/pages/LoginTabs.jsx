@@ -1,38 +1,34 @@
 import { useState } from "react";
-import "../css/login.css";
-import LoginForm from "../components/Login";
+//import "../css/login.css";
+import LoginForm from "../components/login/Login";
+import TabButton from "../components/login/TabButton";
 
 const LoginTabs = () => {
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState("Login");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
   return (
-    <div className="form-container">
-      {/* Tabs */}
-      <div className="tabs">
-        <button
-          className={activeTab === "login" ? "active" : ""}
-          onClick={() => handleTabClick("login")}
-        >
-          Login
-        </button>
-        <button
-          className={activeTab === "register" ? "active" : ""}
-          onClick={() => handleTabClick("register")}
-        >
-          Register
-        </button>
+    <div className="flex flex-col items-center justify-center">
+      <div className="form-container flex h-screen flex-col items-center justify-center max-w-sm">
+        {/* Tabs */}
+        <div className="tabs flex py-4">
+          <TabButton
+            activeTab={activeTab}
+            handleTabClick={handleTabClick}
+            tab="Login"
+          />
+          <TabButton
+            activeTab={activeTab}
+            handleTabClick={handleTabClick}
+            tab="Register"
+          />
+        </div>
+        {/* Content */}
+        <LoginForm mode={activeTab} />
       </div>
-
-      {/* Content */}
-      {activeTab === "login" ? (
-        <LoginForm mode="login" />
-      ) : (
-        <LoginForm mode="register" />
-      )}
     </div>
   );
 };

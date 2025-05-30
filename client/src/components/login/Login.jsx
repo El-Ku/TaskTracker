@@ -1,20 +1,21 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import makeApiCall from "../services/makeApiCall";
+import makeApiCall from "../../services/makeApiCall";
 import { useNavigate } from "react-router-dom";
 import {
   passwordSchema,
   userNameSchema,
   emailSchema,
-} from "../validation/zodSchemas";
+} from "../../validation/zodSchemas";
+import InputField from "./InputField";
 
 const getSchema = (mode) => {
   return z
     .object({
       username: userNameSchema,
       password: passwordSchema,
-      ...(mode === "register" && { email: emailSchema }),
+      ...(mode === "Register" && { email: emailSchema }),
       confirmPassword: z.string().optional(), // add this so refine can access it
     })
     .refine(
@@ -41,7 +42,7 @@ const Login = ({ mode }) => {
 
   const onSubmit = async (form) => {
     try {
-      const endpoint = mode === "login" ? "login" : "register";
+      const endpoint = mode.toLowerCase();
 
       const data = await makeApiCall(
         `/api/auth/${endpoint}`,
@@ -50,7 +51,7 @@ const Login = ({ mode }) => {
         false
       );
       if (data.result === "success") {
-        if (mode === "login") {
+        if (mode === "Login") {
           localStorage.setItem("userName", form.username);
           localStorage.setItem("token", data.token);
           localStorage.setItem("userRole", data.role);
@@ -66,39 +67,57 @@ const Login = ({ mode }) => {
   };
 
   return (
-    <div className="login-container">
-      <p className="login-description">
-        {mode === "login"
-          ? "Please enter your username and password to login."
-          : "Please enter your details to register."}
+    <div className="flex flex-col gap-4 w-full items-center">
+      <p>
+        {mode === "Login"
+          ? "Please login to access your account"
+          : "New here? Please enter your details to register."}
       </p>
 
-      <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
-        <input type="text" placeholder="Username" {...register("username")} />
-        {errors.username && <p className="error">{errors.username.message}</p>}
-        {mode === "register" && (
-          <input type="email" placeholder="Email" {...register("email")} />
-        )}
-        {errors.email && <p className="error">{errors.email.message}</p>}
-        <input
-          type="password"
-          placeholder="Password"
-          {...register("password")}
+      <form
+        className="flex flex-col gap-2 border-2 border-gray-300 rounded-md p-4 min-w-80"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <InputField
+          register={register}
+          errors={errors}
+          type="text"
+          placeholder="Username"
+          property="username"
         />
-        {errors.password && <p className="error">{errors.password.message}</p>}
-        {mode === "register" && (
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            {...register("confirmPassword")}
+
+        {mode === "Register" && (
+          <InputField
+            register={register}
+            errors={errors}
+            type="email"
+            placeholder="Email"
+            property="email"
           />
         )}
-        {errors.confirmPassword && (
-          <p className="error">{errors.confirmPassword.message}</p>
+        <InputField
+          register={register}
+          errors={errors}
+          type="password"
+          placeholder="Password"
+          property="password"
+        />
+        {mode === "Register" && (
+          <InputField
+            register={register}
+            errors={errors}
+            type="password"
+            placeholder="Confirm Password"
+            property="confirmPassword"
+          />
         )}
         {errors.root && <p className="error">{errors.root.message}</p>}
-        <button disabled={isSubmitting} type="submit">
-          {mode === "login" ? "Login" : "Register"}
+        <button
+          className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+          disabled={isSubmitting}
+          type="submit"
+        >
+          {mode}
         </button>
       </form>
     </div>
