@@ -31,7 +31,7 @@ function Navbar() {
           {localStorage.getItem("userName")}
         </span>
       </p>
-      <ul className="flex flex-row gap-4">
+      <ul className="flex flex-row gap-4 flex-wrap mt-4">
         {!isLoggedIn && <li onClick={() => navigate("/")}>Home</li>}
         {isLoggedIn && <li onClick={() => navigate("/profile")}>Profile</li>}
         {isLoggedIn && isAdmin && (

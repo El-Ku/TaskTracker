@@ -1,5 +1,6 @@
 import { useTasks } from "../../contexts/TasksContext";
 import { updateTasks, deleteTasks } from "../../services/taskApiCalls";
+import SingleActionButton from "./SingleActionButton";
 
 function ActionButtons({ task }) {
   const {
@@ -65,35 +66,17 @@ function ActionButtons({ task }) {
   };
 
   return (
-    <div className="action-buttons">
-      <button
-        id="deleteTasksBtn"
-        onClick={async () => deleteSelectedTasks()}
-        disabled={!selectedRows || selectedRows.length === 0}
-      >
-        Delete Selected Tasks
-      </button>
-      <button
-        id="markAsDoneBtn"
-        onClick={async () => markAsDone()}
-        disabled={!selectedRows || selectedRows.length === 0}
-      >
-        Mark As Done
-      </button>
-      <button
-        id="markAsPendingBtn"
-        onClick={async () => markAsPending()}
-        disabled={!selectedRows || selectedRows.length === 0}
-      >
-        Mark As Pending
-      </button>
-      <button
-        id="markAsPausedBtn"
-        onClick={async () => markAsPaused()}
-        disabled={!selectedRows || selectedRows.length === 0}
-      >
-        Mark As Paused
-      </button>
+    <div className="flex flex-row gap-4 px-6 mb-4 justify-center flex-wrap">
+      <SingleActionButton action={deleteSelectedTasks} text="Delete Tasks" />
+      <SingleActionButton action={changeStatus("done")} text="Mark as Done" />
+      <SingleActionButton
+        action={changeStatus("pending")}
+        text="Mark as Pending"
+      />
+      <SingleActionButton
+        action={changeStatus("paused")}
+        text="Mark as Paused"
+      />
     </div>
   );
 }

@@ -111,7 +111,11 @@ const Login = ({ mode }) => {
             property="confirmPassword"
           />
         )}
-        {errors.root && <p className="error">{errors.root.message}</p>}
+        {errors.root && (
+          <p className="mt-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-md text-sm">
+            {errors.root.message}
+          </p>
+        )}
         <button
           className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
           disabled={isSubmitting}

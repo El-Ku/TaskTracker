@@ -9,6 +9,7 @@ function TaskInput() {
 
   const handleChange = (e) => {
     setTaskInput(e.target.value);
+    setError(null);
   };
 
   const addTasksToDatabase = async () => {
@@ -24,9 +25,10 @@ function TaskInput() {
   };
 
   return (
-    <div className="task-input-section">
-      <div className="input-row">
+    <div className="flex flex-col items-center px-4 sm:px-6 gap-4 max-w-6xl mx-auto w-full">
+      <div className="flex flex-row gap-4 w-full">
         <input
+          className="border-2 border-gray-300 rounded-md p-2 hover:border-gray-400 w-full"
           type="text"
           id="taskInput"
           value={taskInput}
@@ -41,14 +43,23 @@ function TaskInput() {
             }
           }}
         />
-        <button id="addBtn" onClick={async () => addTasksToDatabase()}>
+        <button
+          className="bg-blue-500 text-white px-4 rounded-md hover:bg-blue-600"
+          onClick={async () => addTasksToDatabase()}
+        >
           Add
         </button>
-        <p>
-          You have a total of <strong>{taskCount} </strong>tasks
-        </p>
       </div>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      <p className="text-lg mb-4">
+        {taskCount > 0 ? (
+          <p>
+            You have a total of <strong>{taskCount} </strong>tasks
+          </p>
+        ) : (
+          "You have no tasks yet"
+        )}
+      </p>
     </div>
   );
 }

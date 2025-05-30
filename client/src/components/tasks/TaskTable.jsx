@@ -31,15 +31,17 @@ function TaskTable() {
   const table = tableSettings();
 
   return (
-    <div>
+    <div className="p-6 max-w-6xl mx-auto font-sans w-full">
       <ActionButtons />
-      <div className="whole-table">
-        <table className="task-table">
+      <div className="flex flex-col items-center">
+        <table className="w-full border-2 border-gray-200 rounded-lg shadow-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
+                    className={`px-4 py-3 text-left text-sm font-semibold text-gray-700 bg-gray-50 border-b-2 border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors duration-200
+                    ${header.id === "select" ? "w-12 text-center" : ""}`}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                   >
@@ -48,12 +50,15 @@ function TaskTable() {
                       header.getContext()
                     )}
                     {/* Sorting indicators */}
-                    {header.id !== "select" &&
-                      ({
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted()] ??
-                        null)}
+                    {header.id !== "select" && (
+                      <span className="ml-1 inline-block align-middle">
+                        {header.column.getIsSorted() === "asc"
+                          ? " 🔼"
+                          : header.column.getIsSorted() === "desc"
+                          ? " 🔽"
+                          : null}
+                      </span>
+                    )}
                   </th>
                 ))}
               </tr>
@@ -61,10 +66,24 @@ function TaskTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className={`status-${row.original.status}`}>
+              <tr
+                key={row.id}
+                className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200
+                ${
+                  row.original.status === "pending"
+                    ? "bg-yellow-200"
+                    : row.original.status === "done"
+                    ? "bg-green-200"
+                    : row.original.status === "paused"
+                    ? "bg-gray-300"
+                    : ""
+                }`}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
+                    className={`px-4 py-3 text-sm text-gray-600 border-r border-gray-200 last:border-r-0
+                      ${cell.column.id === "select" ? "text-center" : ""}`}
                     onChange={() => {
                       if (row.id === "select") {
                         cell.handleCheckboxChange(row.id);
@@ -72,7 +91,6 @@ function TaskTable() {
                         null;
                       }
                     }}
-                    style={{ padding: "10px", border: "1px solid #ddd" }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -82,7 +100,11 @@ function TaskTable() {
           </tbody>
         </table>
       </div>
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <p className="mt-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-md text-sm">
+          {error}
+        </p>
+      )}
       <SyncToDBButton />
     </div>
   );

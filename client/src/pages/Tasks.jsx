@@ -2,13 +2,14 @@ import TaskInput from "../components/tasks/TaskInput.jsx";
 import TaskTable from "../components/tasks/TaskTable.jsx";
 import ClearAllButton from "../components/tasks/ClearAllButton.jsx";
 import { TasksProvider } from "../contexts/TasksContext.jsx";
-import "../css/Tasks.css";
 
 function Tasks() {
   return (
-    <div className="tasks-container">
+    <div className="flex flex-col ml-6">
       <TasksProvider>
-        <h1>Task Manager</h1>
+        <h1 className="flex flex-col items-center text-4xl font-bold m-4">
+          Task Manager
+        </h1>
         <TaskInput />
         <TaskTable />
         <ClearAllButton />
