@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
 import { passwordSchema } from "../../validation/zodSchemas";
+import SingleFormField from "./SingleFormField";
 
 const schema = z
   .object({
@@ -46,35 +47,47 @@ function ChangePassword() {
 
   return (
     <div className="compact-form">
-      <h3>Change Password</h3>
+      <h3 className="text-xl font-bold my-4">Change Password</h3>
       <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
-        <input
+        <SingleFormField
           type="password"
-          placeholder="Current password"
-          {...register("currentPassword")}
+          label="Current password"
+          register={register}
+          errors={errors}
+          property="currentPassword"
         />
-        {errors.currentPassword && (
-          <p className="error">{errors.currentPassword.message}</p>
-        )}
-        <input
+
+        <SingleFormField
           type="password"
-          placeholder="New password"
-          {...register("newPassword")}
+          label="New password"
+          register={register}
+          errors={errors}
+          property="newPassword"
         />
-        {errors.newPassword && (
-          <p className="error">{errors.newPassword.message}</p>
-        )}
-        <input
+
+        <SingleFormField
           type="password"
-          placeholder="Confirm password"
-          {...register("confirmPassword")}
+          label="Confirm password"
+          register={register}
+          errors={errors}
+          property="confirmPassword"
         />
-        {errors.confirmPassword && (
-          <p className="error">{errors.confirmPassword.message}</p>
+
+        {errors.root && (
+          <p className="m-2 p-2 bg-red-50 text-red-700 border border-red-200 rounded-md text-sm mx-4">
+            {errors.root.message}
+          </p>
         )}
-        {errors.root && <p className="error">{errors.root.message}</p>}
-        <button disabled={isSubmitting} type="submit">
-          Update Password
+        <button
+          disabled={isSubmitting}
+          className="mx-47 my-8 px-4 py-2 rounded-md max-w-60 bg-blue-500 text-white hover:bg-blue-600"
+          type="submit"
+        >
+          {isSubmitting ? (
+            <span className="ml-2">Updating...</span>
+          ) : (
+            <span className="ml-2">Update Password</span>
+          )}
         </button>
       </form>
     </div>

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import makeApiCall from "../../services/makeApiCall";
 import isEqual from "lodash/isEqual";
 import { fullNameSchema, emailSchema } from "../../validation/zodSchemas";
+import SingleFormField from "./SingleFormField";
 
 const schema = z.object({
   fullName: fullNameSchema,
@@ -52,23 +53,46 @@ function ChangeUserInfo() {
       await makeApiCall("/api/profile/user-info", "PATCH", profileInfo);
       alert("User info updated successfully");
       setError("");
-      setOriginalInfo(profileInfo); // Update reference
+      setOriginalInfo(profileInfo);
     } catch (err) {
       setError("root", { message: err.message || "Something went wrong." });
     }
   };
   return (
-    <div>
-      <h2>User Settings</h2>
+    <div className="flex flex-col">
+      <h2 className="text-2xl underline font-bold my-4">User Settings</h2>
 
-      <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
-        <input type="text" placeholder="Full name" {...register("fullName")} />
-        {errors.fullName && <p className="error">{errors.fullName.message}</p>}
-        <input type="text" placeholder="Email" {...register("email")} />
-        {errors.email && <p className="error">{errors.email.message}</p>}
-        {errors.root && <p className="error">{errors.root.message}</p>}
-        <button disabled={isSubmitting} className="update-btn" type="submit">
-          Update Info
+      <form className="gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <SingleFormField
+          type="text"
+          label="Full Name"
+          register={register}
+          errors={errors}
+          property="fullName"
+        />
+        <SingleFormField
+          type="email"
+          label="Email"
+          register={register}
+          errors={errors}
+          property="email"
+        />
+
+        {errors.root && (
+          <p className="mt-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-md text-sm mx-4">
+            {errors.root.message}
+          </p>
+        )}
+        <button
+          disabled={isSubmitting}
+          className="mx-50 my-8 px-4 py-2 rounded-md max-w-40 bg-blue-500 text-white hover:bg-blue-600"
+          type="submit"
+        >
+          {isSubmitting ? (
+            <span className="ml-2">Updating...</span>
+          ) : (
+            <span className="ml-2">Update Info</span>
+          )}
         </button>
       </form>
     </div>
