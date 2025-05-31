@@ -30,18 +30,6 @@ function ActionButtons({ task }) {
     }
   };
 
-  const markAsDone = async () => {
-    changeStatus("done");
-  };
-
-  const markAsPaused = async () => {
-    changeStatus("paused");
-  };
-
-  const markAsPending = async () => {
-    changeStatus("pending");
-  };
-
   const changeStatus = async (status) => {
     const tasksToUpdate = selectedRows.map((rowIndex) => ({
       _id: tasks[rowIndex]._id,
@@ -68,12 +56,24 @@ function ActionButtons({ task }) {
   return (
     <div className="flex flex-row gap-4 px-6 mb-4 justify-center flex-wrap">
       <SingleActionButton action={deleteSelectedTasks} text="Delete Tasks" />
-      <SingleActionButton action={changeStatus("done")} text="Mark Done" />
       <SingleActionButton
-        action={changeStatus("pending")}
+        action={() => {
+          changeStatus("done");
+        }}
+        text="Mark Done"
+      />
+      <SingleActionButton
+        action={() => {
+          changeStatus("pending");
+        }}
         text="Mark Pending"
       />
-      <SingleActionButton action={changeStatus("paused")} text="Mark Paused" />
+      <SingleActionButton
+        action={() => {
+          changeStatus("paused");
+        }}
+        text="Mark Paused"
+      />
     </div>
   );
 }
