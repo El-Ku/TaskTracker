@@ -8,6 +8,10 @@ import adminRouter from "./routes/adminRouter.js";
 import cors from "cors";
 
 const app = express();
+
+// trust the first proxy in the chain.
+app.set("trust proxy", 1);
+
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
 const allowedOrigin =
