@@ -139,6 +139,7 @@ const tasksSanityCheck = async (userId, reqBody, patch = false) => {
     desc: task.desc,
     userId,
     ...(patch && { status: task.status }),
+    ...(!patch && { status: "pending" }),
   }));
   const tasks = await Task.find({ userId }); // find all current tasks of an user
   const taskKeys = new Set(tasks.map((task) => `${task.desc}||${task.status}`));
