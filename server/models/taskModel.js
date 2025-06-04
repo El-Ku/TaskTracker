@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { TaskStatus } from "../../CONSTANTS.js";
 
 const taskSchema = mongoose.Schema(
   {
@@ -9,10 +8,25 @@ const taskSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: Object.values(TaskStatus),
-      default: TaskStatus.PENDING,
+      enum: Object.values(["pending", "done", "paused"]),
+      default: "pending",
     },
     userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    tagId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag",
+    },
+    tagName: {
+      type: String,
+    },
+    assigneeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    assignorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },

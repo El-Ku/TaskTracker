@@ -6,23 +6,16 @@ import userAuthRouter from "./routes/userAuthRouter.js";
 import profileRouter from "./routes/profileRouter.js";
 import adminRouter from "./routes/adminRouter.js";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
-// trust the first proxy in the chain.
-app.set("trust proxy", 1);
-
-const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
-
-const allowedOrigin =
-  process.env.NODE_ENV === "production"
-    ? "https://tasktracker-client-yuyo.onrender.com"
-    : "http://localhost:5173";
-
 app.use(
   cors({
-    origin: allowedOrigin,
-    credentials: true,
+    origin: "https://www.tasktracker.app.elku.xyz",
+    credentials: true, // if you're sending cookies or Authorization headers
   })
 );
 
@@ -30,6 +23,7 @@ connectDB();
 
 app.use(express.static("public"));
 
+const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`Task Tracker App listening on port ${port}`);
 });
