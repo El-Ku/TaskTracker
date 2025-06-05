@@ -5,19 +5,11 @@ import errorHandler from "./middleware/errorMiddleware.js";
 import userAuthRouter from "./routes/userAuthRouter.js";
 import profileRouter from "./routes/profileRouter.js";
 import adminRouter from "./routes/adminRouter.js";
-import cors from "cors";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
-
-app.use(
-  cors({
-    origin: "https://www.tasktracker.app.elku.xyz",
-    credentials: true, // if you're sending cookies or Authorization headers
-  })
-);
 
 connectDB();
 
@@ -29,13 +21,13 @@ app.listen(port, () => {
 });
 
 // Redirect root URL to login.html
-app.get("/", (req, res) => {
+app.get("/tasktracker/", (req, res) => {
   res.redirect("/welcome.html");
 });
 
-app.use("/api/auth", userAuthRouter);
-app.use("/api/profile", profileRouter);
-app.use("/api/tasks", taskRouter);
-app.use("/api/admin", adminRouter);
+app.use("/tasktracker/api/auth", userAuthRouter);
+app.use("/tasktracker/api/profile", profileRouter);
+app.use("/tasktracker/api/tasks", taskRouter);
+app.use("/tasktracker/api/admin", adminRouter);
 
 app.use(errorHandler); // very important to place it at the very end to catch all errors.
