@@ -55,10 +55,12 @@ const Login = ({ mode }) => {
           localStorage.setItem("userName", form.username);
           localStorage.setItem("token", data.token);
           localStorage.setItem("userRole", data.role);
-          data.role === "user" ? navigate("/profile") : navigate("/admin");
+          data.role === "user"
+            ? navigate("/tasktracker/profile")
+            : navigate("/tasktracker/admin");
         } else {
           alert("Registration successful! Please login.");
-          window.location.href = "/";
+          window.location.href = "/tasktracker";
         }
       }
     } catch (err) {

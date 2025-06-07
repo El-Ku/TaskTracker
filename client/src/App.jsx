@@ -11,7 +11,7 @@ function App() {
     <main className="main-content">
       <Navbar />
       <Routes>
-        <Route path="/" element={<LoginTabs />} />
+        <Route path="/tasktracker" element={<LoginTabs />} />
         <Route element={<ProtectedLayout />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/tasks" element={<Tasks />} />
