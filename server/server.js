@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", "loopback"); // only trust 127.0.0.1
 
 connectDB();
 

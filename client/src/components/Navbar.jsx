@@ -22,7 +22,7 @@ function Navbar() {
     localStorage.removeItem("userRole");
     setIsLoggedIn(false);
     setIsAdmin(false);
-    navigate("/tasktracker"); // redirect to login page
+    navigate("/"); // redirect to login page
     setIsOpen(false); // Close mobile menu on logout
   };
 
@@ -94,7 +94,7 @@ function Navbar() {
       >
         {!isLoggedIn && (
           <li
-            onClick={() => handleNavigate("/tasktracker")}
+            onClick={() => handleNavigate("/")}
             className="cursor-pointer hover:bg-blue-600 md:hover:bg-transparent md:hover:text-blue-200 px-3 py-2 rounded-md transition-colors duration-200"
           >
             Home
@@ -102,7 +102,7 @@ function Navbar() {
         )}
         {isLoggedIn && (
           <li
-            onClick={() => handleNavigate("/tasktracker/profile")}
+            onClick={() => handleNavigate("/profile")}
             className="cursor-pointer hover:bg-blue-600 md:hover:bg-transparent md:hover:text-blue-200 px-3 py-2 rounded-md transition-colors duration-200"
           >
             Profile
@@ -110,7 +110,7 @@ function Navbar() {
         )}
         {isLoggedIn && isAdmin && (
           <li
-            onClick={() => handleNavigate("/tasktracker/admin")}
+            onClick={() => handleNavigate("/admin")}
             className="cursor-pointer hover:bg-blue-600 md:hover:bg-transparent md:hover:text-blue-200 px-3 py-2 rounded-md transition-colors duration-200"
           >
             Dashboard
@@ -118,7 +118,7 @@ function Navbar() {
         )}
         {isLoggedIn && (
           <li
-            onClick={() => handleNavigate("/tasktracker/tasks")}
+            onClick={() => handleNavigate("/tasks")}
             className="cursor-pointer hover:bg-blue-600 md:hover:bg-transparent md:hover:text-blue-200 px-3 py-2 rounded-md transition-colors duration-200"
           >
             Tasks

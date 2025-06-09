@@ -16,10 +16,9 @@ const makeApiCall = async (
       headers.Authorization = `Bearer ${token}`;
     }
   }
-
   const config = {
     method,
-    url: `${import.meta.env.VITE_BASE_URL}${url}`,
+    url: `/tasktracker${url}`,
     headers,
   };
 
