@@ -23,14 +23,14 @@ export const sendEmail = async (to, subject, text) => {
 export const sendWelcomeEmail = async (userEmail, username) => {
   sendEmail(
     userEmail,
-    "Welcome to Task Creator",
+    "Welcome to Task Tracker",
     `Hello ${username},
     
-        Thank you for joining Task Creator! We're excited to have you on board.
+        Thank you for joining Task Tracker! We're excited to have you on board.
         
         If you are not the one who registered, please ignore this email. Or contact us at ${process.env.EMAIL_USER} to delete your account.
         
         Best regards,
-        The Task Creator Team`
+        The Task Tracker Team`
   );
 };

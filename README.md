@@ -1,45 +1,6 @@
-## Things to Check before deploying on Render:
+This service is running at https://www.elku.xyz/tasktracker/
 
-- Change the NODE_ENV variable in the server directory to `production` in the `.env` file.
-- In the server directory, change the `allowedOrigin` variable in the `server.js` file to the URL of your client application. For example, if your client is deployed at `https://my-client-site.onrender.com`, then change it to:
-
-```js
-const allowedOrigin =
-  process.env.NODE_ENV === "production"
-    ? "https://my-client-site.onrender.com"
-    : "http://localhost:5173";
-```
-
-- This is added to server.js file so that rate limiter works well.
-
-```js
-app.set("trust proxy", 1);
-```
-
-## Live deployment
-
-The client(as a static site) and server(as a web service) are deployed on Render. Note that after 15 minutes of inactivity(as I am using a free account in Render), the server will go to sleep and it will take upto 30 seconds to wake up. The client is a static site and will not go to sleep.
-
-- Server is running at [https://tasktracker-ufr9.onrender.com](https://tasktracker-ufr9.onrender.com)
-- Client is running at [https://tasktracker-client-yuyo.onrender.com](https://tasktracker-client-yuyo.onrender.com)
-
-### Render settings for the server:
-
-- Root Directory: `server`
-- Build Command: `npm install`
-- Start Command: `npm run dev`
-- Environment variable: Paste the contents of `.env` file from server directory.
-
-### Render settings for the client:
-
-- Root Directory: `client`
-- Build Command: `npm install; npm run build`
-- Publish Directory: `dist`
-- Environment variable: `VITE_BASE_URL=https://tasktracker-ufr9.onrender.com`
-
-### MongoDB Atlas settings:
-
-Once server is deployed, copy the static IP addresses of the server(from Render dashboard) and paste it in the `Network Access` tab of your MongoDB Atlas account. This is required to allow the server to connect to the database.
+See the detailed deployment steps in this file: lightsail_install_steps.md
 
 ## What is this project?
 
