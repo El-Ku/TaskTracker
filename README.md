@@ -1,6 +1,6 @@
 This service is running at https://www.elku.xyz/tasktracker/
 
-See the detailed deployment steps in this file: lightsail_install_steps.md
+See the detailed deployment steps in this file: [lightsail_install_steps.md](https://github.com/El-Ku/TaskTracker/blob/main/lightsail_install_steps.md)
 
 ## What is this project?
 
