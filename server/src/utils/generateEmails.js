@@ -1,4 +1,4 @@
-import EmailTransporter from "../config/email.js";
+import { EmailTransporter } from "../config/email.js";
 
 export const sendEmail = async (to, subject, text) => {
   const mailOptions = {
@@ -10,9 +10,9 @@ export const sendEmail = async (to, subject, text) => {
   try {
     EmailTransporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error("❌ Error:", error.message);
+        console.error("sendEmail Error:", error.message);
       } else {
-        console.log("✅ Email sent:", info.response);
+        console.log("Email sent:", info.response);
       }
     });
   } catch (error) {
@@ -21,7 +21,7 @@ export const sendEmail = async (to, subject, text) => {
 };
 
 export const sendWelcomeEmail = async (userEmail, username) => {
-  sendEmail(
+  await sendEmail(
     userEmail,
     "Welcome to Task Tracker",
     `Hello ${username},

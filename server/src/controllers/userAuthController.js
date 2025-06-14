@@ -5,7 +5,7 @@ import generateToken from "../utils/generateToken.js";
 import {
   resetLoginLimiter,
   resetRegLimiter,
-} from "../middleware/rateLimitMiddleware";
+} from "../middleware/rateLimitMiddleware.js";
 import { sendWelcomeEmail } from "../utils/generateEmails.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -38,6 +38,18 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+  if (!username) {
+    return res.status(404).json({
+      result: "error",
+      message: "Username is required",
+    });
+  }
+  if (!password) {
+    return res.status(404).json({
+      result: "error",
+      message: "Password is required",
+    });
+  }
   const user = await User.findOne({ username });
   if (!user) {
     return res.status(404).json({

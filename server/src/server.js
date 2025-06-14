@@ -32,3 +32,5 @@ app.use("/tasktracker/api/tasks", taskRouter);
 app.use("/tasktracker/api/admin", adminRouter);
 
 app.use(errorHandler); // very important to place it at the very end to catch all errors.
+
+export default app;

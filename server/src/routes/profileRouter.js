@@ -5,7 +5,7 @@ import validate from "../middleware/validateMiddleware.js";
 import {
   refreshLimiter,
   profileUpdateLimiter,
-} from "../middleware/rateLimitMiddleware";
+} from "../middleware/rateLimitMiddleware.js";
 import { updatePassword } from "../controllers/profileController.js";
 
 const router = express.Router({ mergeParams: true });
