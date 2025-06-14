@@ -20,3 +20,10 @@ export const loginUser = async (userDetails) => {
     .post("/tasktracker/api/auth/login")
     .send(userDetails);
 };
+
+export const loginUserSuccessfully = async (userDetails) => {
+  const response = await loginUser(userDetails);
+  expect(response.status).toBe(200);
+  expect(response.body.message).toBe("User logged in successfully");
+  expect(response.body.token).toHaveLength;
+};

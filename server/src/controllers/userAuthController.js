@@ -38,29 +38,23 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
-  if (!username) {
+  if (!username || !password) {
     return res.status(404).json({
       result: "error",
-      message: "Username is required",
-    });
-  }
-  if (!password) {
-    return res.status(404).json({
-      result: "error",
-      message: "Password is required",
+      message: "Both username and password are required",
     });
   }
   const user = await User.findOne({ username });
   if (!user) {
     return res.status(404).json({
       result: "error",
-      message: "This user Id doesn't exist in our system",
+      message: "Invalid username or password",
     });
   }
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
     return res
-      .status(400)
+      .status(404)
       .json({ result: "error", message: "Invalid username or password" });
   }
   resetLoginLimiter(req.ip); //reset login rate limit

@@ -1,11 +1,10 @@
 import { describe, expect, test, beforeAll } from "@jest/globals";
-import request from "supertest";
-import app from "../../src/server";
 import { userRegInfo, userLoginInfo } from "../utils/constants";
 import {
   registerUser,
   registerUserSuccessfully,
   loginUser,
+  loginUserSuccessfully,
 } from "../utils/auth";
 import { clearDB } from "../utils/db";
 
@@ -13,6 +12,28 @@ describe("Register as a user", () => {
   test("Success: Registering a user with all the required fields", async () => {
     await clearDB();
     await registerUserSuccessfully(userRegInfo);
+  });
+
+  test("Fails: Registering with the same username", async () => {
+    await clearDB();
+    await registerUserSuccessfully(userRegInfo); //1st user
+    const response = await registerUser(userRegInfo); //2nd user with same username
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      "User already exists. Choose a different username"
+    );
+  });
+
+  test("Fails: Registering with the same email", async () => {
+    await clearDB();
+    await registerUserSuccessfully(userRegInfo); //first user
+    const data = { ...userRegInfo };
+    data.username = "dummy-name";
+    const response = await registerUser(data); //2nd user with same email, but different username
+    expect(response.status).toBe(500);
+    expect(response.body.message).toContain(
+      "MongoServerError: E11000 duplicate key error collection"
+    );
   });
 
   test("Fails: Try to register without username field", async () => {
@@ -141,9 +162,7 @@ describe("Logging in", () => {
   });
 
   test("Success: Logging in with the correct info", async () => {
-    const response = await loginUser(userLoginInfo);
-    expect(response.body.message).toBe("User logged in successfully");
-    expect(response.body.token).toHaveLength;
+    await loginUserSuccessfully(userLoginInfo);
   });
 
   test("Fails: Logging in without username", async () => {
@@ -151,6 +170,34 @@ describe("Logging in", () => {
     delete data.username;
     const response = await loginUser(data);
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe("Username is required");
+    expect(response.body.message).toBe(
+      "Both username and password are required"
+    );
+  });
+
+  test("Fails: Logging in without password", async () => {
+    const data = { ...userLoginInfo };
+    delete data.password;
+    const response = await loginUser(data);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe(
+      "Both username and password are required"
+    );
+  });
+
+  test("Fails: Logging in with incorrect password", async () => {
+    const data = { ...userLoginInfo };
+    data.password = "wrong-dummy-password";
+    const response = await loginUser(data);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("Invalid username or password");
+  });
+
+  test("Fails: Logging in with incorrect username", async () => {
+    const data = { ...userLoginInfo };
+    data.username = "wrong-dummy-username";
+    const response = await loginUser(data);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("Invalid username or password");
   });
 });
