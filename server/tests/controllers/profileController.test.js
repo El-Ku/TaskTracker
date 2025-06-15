@@ -1,10 +1,5 @@
 import { describe, expect, test, beforeAll } from "@jest/globals";
-import {
-  userRegInfo,
-  userLoginInfo,
-  invalidEmails,
-  invalidPasswords,
-} from "../utils/constants";
+import { userRegInfo, userLoginInfo, invalidEmails } from "../utils/constants";
 import {
   loginUser,
   loginUserSuccessfully,
