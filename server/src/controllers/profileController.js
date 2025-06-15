@@ -32,7 +32,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     user.email = req.body.email;
     const savedUser = await user.save();
     if (String(savedUser._id) === String(req.user._id)) {
-      res.json({ result: "success" });
+      res.json({ result: "success", message: "Profile updated successfully" });
     } else {
       res
         .status(500)
@@ -86,7 +86,7 @@ export const updatePassword = asyncHandler(async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     const savedUser = await user.save();
     if (String(savedUser._id) === String(req.user._id)) {
-      res.json({ result: "success" });
+      res.json({ result: "success" , message: "Password changed successfully"});
     } else {
       res
         .status(500)

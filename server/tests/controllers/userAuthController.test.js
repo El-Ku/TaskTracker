@@ -1,5 +1,10 @@
 import { describe, expect, test, beforeAll } from "@jest/globals";
-import { userRegInfo, userLoginInfo } from "../utils/constants";
+import {
+  userRegInfo,
+  userLoginInfo,
+  invalidEmails,
+  invalidPasswords,
+} from "../utils/constants";
 import {
   registerUser,
   registerUserSuccessfully,
@@ -8,16 +13,23 @@ import {
 } from "../utils/auth";
 import { clearDB } from "../utils/db";
 
-describe("Register as a user", () => {
+describe("Registering new user(s)", () => {
   test("Success: Registering a user with all the required fields", async () => {
     await clearDB();
-    await registerUserSuccessfully(userRegInfo);
+    await registerUserSuccessfully(userRegInfo[0]);
+  });
+
+  test("Success: Registering multiple users with all the required fields", async () => {
+    await clearDB();
+    for (const user of userRegInfo) {
+      await registerUserSuccessfully(user);
+    }
   });
 
   test("Fails: Registering with the same username", async () => {
     await clearDB();
-    await registerUserSuccessfully(userRegInfo); //1st user
-    const response = await registerUser(userRegInfo); //2nd user with same username
+    await registerUserSuccessfully(userRegInfo[0]); //1st user
+    const response = await registerUser(userRegInfo[0]); //2nd user with same username
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       "User already exists. Choose a different username"
@@ -26,8 +38,8 @@ describe("Register as a user", () => {
 
   test("Fails: Registering with the same email", async () => {
     await clearDB();
-    await registerUserSuccessfully(userRegInfo); //first user
-    const data = { ...userRegInfo };
+    await registerUserSuccessfully(userRegInfo[0]); //first user
+    const data = { ...userRegInfo[0] };
     data.username = "dummy-name";
     const response = await registerUser(data); //2nd user with same email, but different username
     expect(response.status).toBe(500);
@@ -37,7 +49,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: Try to register without username field", async () => {
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     delete data.username;
     const response = await registerUser(data);
     expect(response.status).toBe(400);
@@ -45,7 +57,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: Try to register without password field", async () => {
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     delete data.password;
     const response = await registerUser(data);
     expect(response.status).toBe(400);
@@ -53,7 +65,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: Try to register without confirmPassword field", async () => {
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     delete data.confirmPassword;
     const response = await registerUser(data);
     expect(response.status).toBe(400);
@@ -61,7 +73,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: Try to register without email field", async () => {
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     delete data.email;
     const response = await registerUser(data);
     expect(response.status).toBe(400);
@@ -69,7 +81,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: When username is not valid", async () => {
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     data.username = "la";
     const response = await registerUser(data);
     expect(response.status).toBe(400);
@@ -79,26 +91,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: When password is not valid", async () => {
-    const invalidPasswords = [
-      { pass: "Abcd123", error: "Password must be at least 8 characters long" },
-      {
-        pass: "Abcd1234Abcd1234Abcd1234Abcd12345",
-        error: "Password must be at most 32 characters long",
-      },
-      {
-        pass: "abcd1234",
-        error: "Password must include at least one uppercase letter",
-      },
-      {
-        pass: "Abcdefgh",
-        error: "Password must include at least one number letter",
-      },
-      {
-        pass: "ABCD1234",
-        error: "Password must include at least one lowercase letter",
-      },
-    ];
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     for (const i in invalidPasswords) {
       data.password = invalidPasswords[i].pass;
       const response = await registerUser(data);
@@ -108,26 +101,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: When confirmPassword is not valid", async () => {
-    const invalidPasswords = [
-      { pass: "Abcd123", error: "Password must be at least 8 characters long" },
-      {
-        pass: "Abcd1234Abcd1234Abcd1234Abcd12345",
-        error: "Password must be at most 32 characters long",
-      },
-      {
-        pass: "abcd1234",
-        error: "Password must include at least one uppercase letter",
-      },
-      {
-        pass: "Abcdefgh",
-        error: "Password must include at least one number letter",
-      },
-      {
-        pass: "ABCD1234",
-        error: "Password must include at least one lowercase letter",
-      },
-    ];
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     for (const i in invalidPasswords) {
       data.confirmPassword = invalidPasswords[i].pass;
       const response = await registerUser(data);
@@ -137,14 +111,7 @@ describe("Register as a user", () => {
   });
 
   test("Fails: When email is not valid", async () => {
-    const invalidEmails = [
-      "@gmail.com",
-      "gmail.com",
-      "lala@.com",
-      "lala@.",
-      "lala@com",
-    ];
-    const data = { ...userRegInfo };
+    const data = { ...userRegInfo[0] };
     for (const i in invalidEmails) {
       data.email = invalidEmails[i];
       const response = await registerUser(data);
@@ -155,18 +122,17 @@ describe("Register as a user", () => {
 });
 
 describe("Logging in", () => {
-  //registerUserSuccessfully(userRegInfo);
   beforeAll(async () => {
     await clearDB();
-    await registerUserSuccessfully(userRegInfo);
+    await registerUserSuccessfully(userRegInfo[0]);
   });
 
   test("Success: Logging in with the correct info", async () => {
-    await loginUserSuccessfully(userLoginInfo);
+    await loginUserSuccessfully(userLoginInfo[0]);
   });
 
   test("Fails: Logging in without username", async () => {
-    const data = { ...userLoginInfo };
+    const data = { ...userLoginInfo[0] };
     delete data.username;
     const response = await loginUser(data);
     expect(response.status).toBe(404);
@@ -176,7 +142,7 @@ describe("Logging in", () => {
   });
 
   test("Fails: Logging in without password", async () => {
-    const data = { ...userLoginInfo };
+    const data = { ...userLoginInfo[0] };
     delete data.password;
     const response = await loginUser(data);
     expect(response.status).toBe(404);
@@ -186,7 +152,7 @@ describe("Logging in", () => {
   });
 
   test("Fails: Logging in with incorrect password", async () => {
-    const data = { ...userLoginInfo };
+    const data = { ...userLoginInfo[0] };
     data.password = "wrong-dummy-password";
     const response = await loginUser(data);
     expect(response.status).toBe(404);
@@ -194,7 +160,7 @@ describe("Logging in", () => {
   });
 
   test("Fails: Logging in with incorrect username", async () => {
-    const data = { ...userLoginInfo };
+    const data = { ...userLoginInfo[0] };
     data.username = "wrong-dummy-username";
     const response = await loginUser(data);
     expect(response.status).toBe(404);

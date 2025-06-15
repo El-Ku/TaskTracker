@@ -26,7 +26,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     ...(username === "admin" && { role: "admin" }),
   };
   const user = await User.create(newUser);
-  sendWelcomeEmail(email, username);
+  //sendWelcomeEmail(email, username);
   if (user) {
     resetRegLimiter(req.ip); //reset register rate limit
     return res.json({
@@ -63,5 +63,6 @@ export const loginUser = asyncHandler(async (req, res) => {
     message: "User logged in successfully",
     token: generateToken(user._id),
     role: user.role,
+    _id: user._id,
   });
 });
