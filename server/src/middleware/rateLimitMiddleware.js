@@ -1,5 +1,7 @@
 import rateLimit from "express-rate-limit";
 
+const allowlist = ["127.0.0.1", "::1", "::ffff:127.0.0.1"]; //IPs to skip
+
 const oneSec = 1000;
 
 // Max 3 login attempts in 10 secs.
@@ -13,6 +15,7 @@ export const loginLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req, res) => allowlist.includes(req.ip),
 });
 
 //reset the limits once the user successfully logins.
@@ -30,6 +33,7 @@ export const taskRateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req, res) => allowlist.includes(req.ip),
 });
 
 // Max 1 user registration in 5 secs.
@@ -42,6 +46,7 @@ export const userRegLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req, res) => allowlist.includes(req.ip),
 });
 
 //reset the limits once the user successfully registers.
@@ -59,6 +64,7 @@ export const refreshLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req, res) => allowlist.includes(req.ip),
 });
 
 // Max 5 profile update per 10 secs.
@@ -71,4 +77,5 @@ export const profileUpdateLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req, res) => allowlist.includes(req.ip),
 });

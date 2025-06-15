@@ -5,7 +5,7 @@ import generateToken from "../utils/generateToken.js";
 import {
   resetLoginLimiter,
   resetRegLimiter,
-} from "../middleware/rateLimitMiddleware";
+} from "../middleware/rateLimitMiddleware.js";
 import { sendWelcomeEmail } from "../utils/generateEmails.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -26,7 +26,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     ...(username === "admin" && { role: "admin" }),
   };
   const user = await User.create(newUser);
-  sendWelcomeEmail(email, username);
+  //sendWelcomeEmail(email, username);
   if (user) {
     resetRegLimiter(req.ip); //reset register rate limit
     return res.json({
@@ -38,17 +38,23 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(404).json({
+      result: "error",
+      message: "Both username and password are required",
+    });
+  }
   const user = await User.findOne({ username });
   if (!user) {
     return res.status(404).json({
       result: "error",
-      message: "This user Id doesn't exist in our system",
+      message: "Invalid username or password",
     });
   }
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
     return res
-      .status(400)
+      .status(404)
       .json({ result: "error", message: "Invalid username or password" });
   }
   resetLoginLimiter(req.ip); //reset login rate limit
@@ -57,5 +63,6 @@ export const loginUser = asyncHandler(async (req, res) => {
     message: "User logged in successfully",
     token: generateToken(user._id),
     role: user.role,
+    _id: user._id,
   });
 });

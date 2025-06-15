@@ -5,7 +5,7 @@ import validate from "../middleware/validateMiddleware.js";
 import {
   taskRateLimiter,
   refreshLimiter,
-} from "../middleware/rateLimitMiddleware";
+} from "../middleware/rateLimitMiddleware.js";
 
 const router = express.Router({ mergeParams: true });
 router.use(express.json());

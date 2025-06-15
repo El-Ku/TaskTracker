@@ -3,7 +3,7 @@ import validate from "../middleware/validateMiddleware.js";
 import {
   loginLimiter,
   userRegLimiter,
-} from "../middleware/rateLimitMiddleware";
+} from "../middleware/rateLimitMiddleware.js";
 import { userRegInfoSchema } from "../validation/joiSchema.js";
 
 const router = express.Router({ mergeParams: true });

@@ -5,7 +5,7 @@ const Joi = coreJoi.extend(joiDate);
 export const mongoObjectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
 export const userNameSchema = Joi.string().min(3).required().messages({
-  "string.min": "Username is required",
+  "string.min": "Username must be at least 3 characters long",
   "any.required": "Username is required",
 });
 
