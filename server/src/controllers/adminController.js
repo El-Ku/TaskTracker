@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
-import Task from "../models/taskModel.js";
+import { User } from "../models/userModel.js";
+import { Task } from "../models/taskModel.js";
 import bcrypt from "bcryptjs";
 
 // Load all users except the admin user

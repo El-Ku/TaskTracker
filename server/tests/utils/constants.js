@@ -48,3 +48,5 @@ export const invalidEmails = [
   "lala@.",
   "lala@com",
 ];
+
+export const tagInfo = {};

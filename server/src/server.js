@@ -1,10 +1,11 @@
 import express from "express";
-import connectDB from "./config/db.js";
-import taskRouter from "./routes/taskRouter.js";
-import errorHandler from "./middleware/errorMiddleware.js";
-import userAuthRouter from "./routes/userAuthRouter.js";
-import profileRouter from "./routes/profileRouter.js";
-import adminRouter from "./routes/adminRouter.js";
+import { connectDB } from "./config/db.js";
+import { taskRouter } from "./routes/taskRouter.js";
+import { errorHandler } from "./middleware/errorMiddleware.js";
+import { userAuthRouter } from "./routes/userAuthRouter.js";
+import { profileRouter } from "./routes/profileRouter.js";
+import { adminRouter } from "./routes/adminRouter.js";
+import { tagRouter } from "./routes/tagRouter.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/tasktracker/api/auth", userAuthRouter);
 app.use("/tasktracker/api/profile", profileRouter);
 app.use("/tasktracker/api/tasks", taskRouter);
 app.use("/tasktracker/api/admin", adminRouter);
+app.use("/tasktracker/api/tags", tagRouter);
 
 app.use(errorHandler); // very important to place it at the very end to catch all errors.
 

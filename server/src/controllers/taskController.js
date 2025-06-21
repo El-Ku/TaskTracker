@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import Task from "../models/taskModel.js";
+import { Task } from "../models/taskModel.js";
 
 const MAX_TASKS = 20;
 
@@ -81,7 +81,7 @@ export const deleteTasks = asyncHandler(async (req, res, next) => {
     } else {
       res.status(500).json({
         result: "error",
-        message: `Couldnt delete any tasks from the database`,
+        message: `Couldn't delete any tasks from the database`,
       });
     }
   } catch (error) {

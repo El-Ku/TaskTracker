@@ -11,8 +11,25 @@ export const clearDB = async () => {
   }
 };
 
-export const getUserInfo = async (user_id) => {
+export const getUserInfo = async (userId) => {
   return db
     .collection("users")
-    .findOne({ _id: ObjectId.createFromHexString(String(user_id)) });
+    .findOne({ _id: ObjectId.createFromHexString(String(userId)) });
+};
+
+export const getNotificationInfos = async (userId) => {
+  return db
+    .collection("notifications")
+    .find({
+      userId: String(userId),
+    })
+    .toArray();
+};
+
+export const countConfirmTokens = async (token) => {
+  return db.collection("confirmTokens").countDocuments();
+};
+
+export const getUserInfoByEmailId = async (email) => {
+  return db.collection("users").findOne({ email: email });
 };

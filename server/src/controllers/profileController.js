@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
-import Task from "../models/taskModel.js";
+import { User } from "../models/userModel.js";
+import { Task } from "../models/taskModel.js";
 import bcrypt from "bcryptjs";
 
 export const getUserInfo = asyncHandler(async (req, res) => {
@@ -86,7 +86,7 @@ export const updatePassword = asyncHandler(async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     const savedUser = await user.save();
     if (String(savedUser._id) === String(req.user._id)) {
-      res.json({ result: "success" , message: "Password changed successfully"});
+      res.json({ result: "success", message: "Password changed successfully" });
     } else {
       res
         .status(500)

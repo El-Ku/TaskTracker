@@ -1,6 +1,6 @@
 import express from "express";
-import protect from "../middleware/protectMiddleware.js";
-import isAdmin from "../middleware/isAdminMiddleware.js";
+import { protect } from "../middleware/protectMiddleware.js";
+import { isAdmin } from "../middleware/isAdminMiddleware.js";
 import {
   getAllUsers,
   deleteUsers,
@@ -8,17 +8,17 @@ import {
   updateUsers,
 } from "../controllers/adminController.js";
 
-const router = express.Router({ mergeParams: true });
-router.use(express.json());
+const adminRouter = express.Router({ mergeParams: true });
+adminRouter.use(express.json());
 
 // Apply `protect` and `admin` to _all_ subsequent routes
-router.use(protect, isAdmin);
+adminRouter.use(protect, isAdmin);
 
-router
+adminRouter
   .route("/users")
   .get(getAllUsers)
   .delete(deleteUsers)
   .post(addUsers)
   .patch(updateUsers);
 
-export default router;
+export { adminRouter };

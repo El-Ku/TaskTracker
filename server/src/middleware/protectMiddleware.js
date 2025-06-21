@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
+import { User } from "../models/userModel.js";
 
-const protect = asyncHandler(async (req, res, next) => {
+export const protect = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.split(" ")[1];
@@ -17,5 +17,3 @@ const protect = asyncHandler(async (req, res, next) => {
   }
   res.status(401).json({ result: "error", message: "No token provided" });
 });
-
-export default protect;

@@ -1,18 +1,11 @@
-import Joi from 'joi';
+import { validateObjects } from "../utils/validateObjects.js";
 
-const validate = (schema, type) => (req, res, next) => {
+export const validate = (schema, type) => (req, res, next) => {
+  try {
     const dataToValidate = req[type];
-    let valResult;
-    if(Array.isArray(dataToValidate)) {
-        const taskArraySchema = Joi.array().items(schema);
-        valResult = taskArraySchema.validate(dataToValidate);
-    } else {
-        valResult = schema.validate(dataToValidate);
-    }
-    if (valResult.error) {
-        return res.status(400).json({ result: "error", message: valResult.error.details[0].message});
-    }
+    validateObjects(dataToValidate, schema);
     next();
+  } catch (err) {
+    res.status(400).json({ result: "error", message: err.message });
+  }
 };
-
-export default validate;
