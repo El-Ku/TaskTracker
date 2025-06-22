@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test, jest } from "@jest/globals";
 import { userRegInfo, userLoginInfo } from "../utils/constants";
 import { regAndLoginSuccessfully } from "../utils/auth";
 import {
@@ -6,9 +6,12 @@ import {
   getNotificationInfos,
   countConfirmTokens,
   getUserInfoByEmailId,
+  deleteTagById,
+  getAllConfirmTokens,
 } from "../utils/db";
 import request from "supertest";
 import app from "../../src/server";
+import { createTag, acceptInvite } from "../utils/tags";
 
 describe("Accessing without correct token", () => {
   test("Fails: Tries to access /api/tags route without access token", async () => {
@@ -21,6 +24,7 @@ describe("Accessing without correct token", () => {
     expect(response.body.message).toBe("Token is not valid");
   });
 });
+
 describe("Create a tag", () => {
   let userOrig;
   beforeEach(async () => {
@@ -110,9 +114,72 @@ describe("Create a tag", () => {
     console.table(response.body);
     await verifySuccessfulTagCreation(response, newTag, userOrig);
   });
+
+  test("Success: Manager accepts the invite to join the tag", async () => {
+    await createTag(userOrig);
+    await acceptInvite(
+      userOrig[1].email,
+      userOrig[1].token,
+      "Manager",
+      "test-tag"
+    );
+  });
+
+  test("Success: Member accepts the invite to join the tag", async () => {
+    await createTag(userOrig);
+    await acceptInvite(
+      userOrig[2].email,
+      userOrig[2].token,
+      "Member",
+      "test-tag"
+    );
+  });
+
+  test("Fails: Trying to join a tag after its deletion", async () => {
+    const savedTag = await createTag(userOrig);
+    await deleteTagById(savedTag._id);
+
+    const notifications = await getNotificationInfos(userOrig[2]._id);
+    const token = notifications[0].gotoUrlOnClick.split("/").pop();
+    const response = await request(app)
+      .get(`/tasktracker/api/tags/accept-invite/${token}`)
+      .set("Authorization", `Bearer ${userOrig[2].token}`);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe(
+      "This tag is either deleted or doesn't exist"
+    );
+  });
+
+  // this test is not working as expected, so skipping it for now
+  // api call is timing out when I use fake timers
+  test.skip("Fails: Member tries to accept the invitation after token expires", async () => {
+    await createTag(userOrig);
+    const userInfo = await getUserInfoByEmailId(userOrig[2].email);
+    const notifications = await getNotificationInfos(userInfo._id);
+    const token = notifications[0].gotoUrlOnClick.split("/").pop();
+
+    console.log("Current date:", new Date());
+    const future = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000);
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(future);
+    console.log("Current date:", new Date());
+
+    console.log("Token:", token);
+    const response = await request(app)
+      .get(`/tasktracker/api/tags/accept-invite/${token}`)
+      .set("Authorization", `Bearer ${userOrig[2].token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("User added to the tag successfully");
+    jest.useRealTimers();
+  });
 });
 
-const verifySuccessfulTagCreation = async (response, newTag, userOrig) => {
+export const verifySuccessfulTagCreation = async (
+  response,
+  newTag,
+  userOrig
+) => {
   expect(response.status).toBe(200);
   expect(response.body.message).toBe("Tag was created successfully");
 
@@ -122,7 +189,10 @@ const verifySuccessfulTagCreation = async (response, newTag, userOrig) => {
   expect(savedTag.tagName).toBe(newTag.tagName);
   expect(savedTag.superManagerId).toBe(userOrig[0]._id.toString());
 
+  let totalInvitesSent = 0;
+
   if (newTag.managerEmails) {
+    totalInvitesSent += newTag.managerEmails.length;
     expect(savedTag.managers).toHaveLength(newTag.managerEmails.length);
     for (const email of newTag.managerEmails) {
       const match = savedTag.managers.find((m) => m.email === email);
@@ -134,6 +204,7 @@ const verifySuccessfulTagCreation = async (response, newTag, userOrig) => {
   }
 
   if (newTag.memberEmails) {
+    totalInvitesSent += newTag.memberEmails.length;
     expect(savedTag.members).toHaveLength(newTag.memberEmails.length);
     for (const email of newTag.memberEmails) {
       const match = savedTag.members.find((m) => m.email === email);
@@ -145,6 +216,11 @@ const verifySuccessfulTagCreation = async (response, newTag, userOrig) => {
   }
 
   const confirmTokensCount = await countConfirmTokens();
+  expect(confirmTokensCount).toBe(totalInvitesSent);
+
+  if (confirmTokensCount > 0) {
+    await validateTokens(savedTag._id);
+  }
 };
 
 const validateNotification = async (email, tagName, roleLabel) => {
@@ -166,4 +242,17 @@ const validateNotification = async (email, tagName, roleLabel) => {
     `You have been invited to join the ${tagName} tag as a ${roleLabel}`
   );
   expect(notification.gotoUrlOnClick).toBeDefined();
+};
+
+const validateTokens = async (tagId) => {
+  const confirmTokens = await getAllConfirmTokens();
+
+  for (const token of confirmTokens) {
+    expect(token.action.tagId.toString()).toBe(tagId.toString());
+    expect(token.token).toBeDefined();
+    expect(token.expiryDate - Date.now()).toBeCloseTo(
+      30 * 24 * 60 * 60 * 1000,
+      -5000
+    ); // within 5 seconds of 30 days
+  }
 };

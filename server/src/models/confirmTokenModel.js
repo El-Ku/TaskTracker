@@ -6,6 +6,10 @@ const confirmTokenSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  action: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
   expiryDate: {
     type: Date,
     default: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now

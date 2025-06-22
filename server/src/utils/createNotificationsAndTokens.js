@@ -3,7 +3,12 @@ import { User } from "../models/userModel.js";
 import { Notifications } from "../models/notificationsModel.js";
 import { ConfirmToken } from "../models/confirmTokenModel.js";
 
-export const createNotificationsAndTokens = async (emails, tagName, role) => {
+export const createNotificationsAndTokens = async (
+  emails,
+  tagName,
+  role,
+  tagId
+) => {
   // Check if these emails are of already registered users
   const regUsers = await User.find({ email: { $in: emails } }, { email: 1 });
   //console.log("Registered users found:", regUsers);
@@ -34,7 +39,7 @@ export const createNotificationsAndTokens = async (emails, tagName, role) => {
     }
 
     notifications.push(notification);
-    confirmTokens.push({ token: token });
+    confirmTokens.push({ token, action: { tagId, role } });
   }
   const savedNotifications = await Notifications.insertMany(notifications);
   if (!savedNotifications || savedNotifications.length === 0) {

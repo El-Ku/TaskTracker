@@ -58,9 +58,14 @@ const sendInviteEmailsToManagers = async ({
   );
 };
 
-export const sendInvites = async (emails, tagName, role) => {
+export const sendInvites = async (emails, tagName, role, tagId) => {
   try {
-    const emailInfo = await createNotificationsAndTokens(emails, tagName, role);
+    const emailInfo = await createNotificationsAndTokens(
+      emails,
+      tagName,
+      role,
+      tagId
+    );
     for (const info of emailInfo) {
       if (role === "Manager") {
         await sendInviteEmailsToManagers(info);

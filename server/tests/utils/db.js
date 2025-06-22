@@ -26,10 +26,20 @@ export const getNotificationInfos = async (userId) => {
     .toArray();
 };
 
-export const countConfirmTokens = async (token) => {
-  return db.collection("confirmTokens").countDocuments();
+export const countConfirmTokens = async () => {
+  return db.collection("confirmtokens").countDocuments();
 };
 
 export const getUserInfoByEmailId = async (email) => {
   return db.collection("users").findOne({ email: email });
+};
+
+export const deleteTagById = async (tagId) => {
+  return db
+    .collection("tags")
+    .deleteOne({ _id: ObjectId.createFromHexString(tagId) });
+};
+
+export const getAllConfirmTokens = async () => {
+  return db.collection("confirmtokens").find({}).toArray();
 };
